@@ -1,0 +1,1 @@
+export default function Sidebar(){ return (<aside style={{padding:'16px',border:'1px solid #dde5f0',borderRadius:'10px',marginTop:'16px'}}><h3>Partner Menu</h3><ul><li>My services</li><li>Orders</li></ul></aside>);}

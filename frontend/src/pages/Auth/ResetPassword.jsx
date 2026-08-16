@@ -1,0 +1,1 @@
+export default function ResetPassword() { return (<div className='card'><h2>Reset Password</h2><p>Feature not implemented in this demo.</p></div>); }

@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light only" />
+    <meta
+      name="description"
+      content="A user-friendly authentication flow for signing up, verifying email, signing in, and managing your session."
+    />
+    <title>DigitalInfraTech Account Center</title>
+    <link rel="stylesheet" href="/auth-lab/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="hero">
+        <div class="brand-row">
+          <div class="brand">DigitalInfraTech</div>
+          <div class="brand-badge">Secure account center</div>
+        </div>
+
+        <h1>Everything your customer needs, in one simple flow.</h1>
+        <p class="lede">
+          Create an account, verify email, sign in with a one-time code, reset
+          a password, and manage the session without leaving the page.
+        </p>
+
+        <div class="hero-card">
+          <div>
+            <span class="label">API base</span>
+            <strong id="apiBaseLabel">/api/auth</strong>
+          </div>
+          <div>
+            <span class="label">Session</span>
+            <strong id="sessionLabel">empty</strong>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button type="button" data-action="jump-register">Create account</button>
+          <button type="button" data-action="jump-login" class="ghostish">Sign in</button>
+          <button type="button" data-action="jump-recovery" class="ghostish">
+            Recover password
+          </button>
+        </div>
+
+        <div class="hero-steps">
+          <button type="button" class="step-dot active" data-step="register">
+            1. Register
+          </button>
+          <button type="button" class="step-dot" data-step="verify-email">
+            2. Verify
+          </button>
+          <button type="button" class="step-dot" data-step="login">
+            3. Sign in
+          </button>
+          <button type="button" class="step-dot" data-step="login-code">
+            4. Code
+          </button>
+          <button type="button" class="step-dot" data-step="forgot-password">
+            5. Recover
+          </button>
+          <button type="button" class="step-dot" data-step="session">
+            6. Session
+          </button>
+        </div>
+
+        <p class="hint">
+          Tip: use the quick-fill buttons to try the flow as a customer or a
+          partner, then step through the experience like a real user.
+        </p>
+      </aside>
+
+      <main class="workspace">
+        <section class="toolbar">
+          <button data-action="fill-customer" class="ghost">Try customer demo</button>
+          <button data-action="fill-partner" class="ghost">Try partner demo</button>
+          <button data-action="clear-all" class="ghost">Reset session</button>
+          <button data-action="copy-state" class="ghost">Copy state</button>
+          <a class="ghost link" href="/api/health" target="_blank" rel="noreferrer">
+            Health check
+          </a>
+        </section>
+
+        <section class="auth-surface">
+          <div class="flow-header">
+            <div>
+              <p class="eyebrow">Interactive account journey</p>
+              <h2 id="flowTitle">Create your account</h2>
+              <p id="flowSubtitle" class="flow-subtitle">
+                Start with your details and move through the same experience a
+                customer would use.
+              </p>
+            </div>
+            <div class="step-pill" id="flowStep">Step 1 / 6</div>
+          </div>
+
+          <div class="flow-banner" id="flowMessage" role="status" aria-live="polite">
+            Use the form below to start the real registration flow.
+          </div>
+
+          <div class="progress-track" aria-hidden="true">
+            <span id="progressFill"></span>
+          </div>
+
+          <section class="flow-card active" data-view="register">
+            <div class="card-header">
+              <div>
+                <h3>Create account</h3>
+                <p class="flow-card-copy">
+                  Register to get started. You can switch role, fill sample
+                  data, or jump to another step anytime.
+                </p>
+              </div>
+              <button type="button" class="mini-link" data-action="demo-register">
+                Fill sample data
+              </button>
+            </div>
+            <form id="registerForm" class="stack">
+              <div class="row">
+                <label>
+                  Name
+                  <input name="name" type="text" value="Test User" required />
+                </label>
+                <label>
+                  Email
+                  <input
+                    name="email"
+                    type="email"
+                    value="test.user@example.com"
+                    required
+                  />
+                </label>
+              </div>
+              <div class="row">
+                <label class="password-field">
+                  Password
+                  <input
+                    name="password"
+                    type="password"
+                    value="Abhi@1234"
+                    required
+                  />
+                  <button type="button" class="field-toggle" data-action="toggle-password">
+                    Show
+                  </button>
+                </label>
+                <label>
+                  Role
+                  <select name="role">
+                    <option value="customer">Customer</option>
+                    <option value="partner">Partner</option>
+                  </select>
+                </label>
+              </div>
+              <div class="row">
+                <label>
+                  Phone
+                  <input name="phone" type="text" placeholder="Optional" />
+                </label>
+                <label>
+                  Company
+                  <input name="companyName" type="text" placeholder="Optional" />
+                </label>
+              </div>
+              <div class="actions">
+                <button type="submit">Create account</button>
+                <button type="button" class="ghostish" data-action="jump-login">
+                  I already have an account
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="flow-card" data-view="verify-email">
+            <div class="card-header">
+              <div>
+                <h3>Verify your email</h3>
+                <p class="flow-card-copy">
+                  Enter the code that was sent to your inbox to activate the
+                  account.
+                </p>
+              </div>
+              <button type="button" class="mini-link" data-action="jump-register">
+                Back to register
+              </button>
+            </div>
+            <form id="verifyEmailForm" class="stack">
+              <label>
+                Verification code
+                <input
+                  name="code"
+                  type="text"
+                  maxlength="6"
+                  placeholder="Paste the code from your email"
+                />
+              </label>
+              <div class="actions">
+                <button type="submit">Verify email</button>
+                <button type="button" id="resendVerificationButton">
+                  Resend code
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="flow-card" data-view="login">
+            <div class="card-header">
+              <div>
+                <h3>Sign in</h3>
+                <p class="flow-card-copy">
+                  Use the same email and password your customer would use when
+                  logging in.
+                </p>
+              </div>
+              <button type="button" class="mini-link" data-action="demo-login">
+                Fill sign-in demo
+              </button>
+            </div>
+            <form id="loginForm" class="stack">
+              <div class="row">
+                <label>
+                  Email
+                  <input
+                    name="email"
+                    type="email"
+                    value="test.user@example.com"
+                    required
+                  />
+                </label>
+                <label class="password-field">
+                  Password
+                  <input
+                    name="password"
+                    type="password"
+                    value="Abhi@1234"
+                    required
+                  />
+                  <button type="button" class="field-toggle" data-action="toggle-password">
+                    Show
+                  </button>
+                </label>
+              </div>
+              <div class="actions">
+                <button type="submit">Continue to sign in</button>
+                <button type="button" class="ghostish" data-action="jump-recovery">
+                  Forgot password?
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="flow-card" data-view="login-code">
+            <div class="card-header">
+              <div>
+                <h3>Enter one-time code</h3>
+                <p class="flow-card-copy">
+                  A security code has been sent to your email. Enter it here to
+                  finish signing in.
+                </p>
+              </div>
+              <button type="button" class="mini-link" data-action="resend-login-code">
+                Resend code
+              </button>
+            </div>
+            <form id="verifyCodeForm" class="stack">
+              <div class="row">
+                <label>
+                  Challenge ID
+                  <input
+                    name="challengeId"
+                    type="text"
+                    placeholder="From the login response"
+                  />
+                </label>
+                <label>
+                  Code
+                  <input
+                    name="code"
+                    type="text"
+                    maxlength="6"
+                    placeholder="123456"
+                  />
+                </label>
+              </div>
+              <div class="actions">
+                <button type="submit">Verify code</button>
+                <button type="button" class="ghostish" data-action="jump-login">
+                  Back to sign in
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="flow-card" data-view="forgot-password">
+            <div class="card-header">
+              <div>
+                <h3>Forgot password</h3>
+                <p class="flow-card-copy">
+                  Request a reset code and continue the recovery flow.
+                </p>
+              </div>
+              <button type="button" class="mini-link" data-action="demo-recovery">
+                Fill recovery demo
+              </button>
+            </div>
+            <form id="forgotPasswordForm" class="stack">
+              <label>
+                Email
+                <input
+                  name="email"
+                  type="email"
+                  value="test.user@example.com"
+                  required
+                />
+              </label>
+              <div class="actions">
+                <button type="submit">Send reset code</button>
+                <button type="button" class="ghostish" data-action="jump-login">
+                  Back to sign in
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="flow-card" data-view="reset-password">
+            <div class="card-header">
+              <div>
+                <h3>Reset password</h3>
+                <p class="flow-card-copy">
+                  Enter the reset code and choose a new password for your
+                  account.
+                </p>
+              </div>
+              <button type="button" class="mini-link" data-action="demo-reset">
+                Fill reset demo
+              </button>
+            </div>
+            <form id="resetPasswordForm" class="stack">
+              <label>
+                Reset code
+                <input
+                  name="code"
+                  type="text"
+                  maxlength="6"
+                  placeholder="Use the code from your email"
+                />
+              </label>
+              <label class="password-field">
+                New password
+                <input
+                  name="password"
+                  type="password"
+                  value="NewPass@123"
+                  required
+                />
+                <button type="button" class="field-toggle" data-action="toggle-password">
+                  Show
+                </button>
+              </label>
+              <div class="actions">
+                <button type="submit">Reset password</button>
+                <button type="button" class="ghostish" data-action="jump-recovery">
+                  Back to recovery
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="flow-card" data-view="session">
+            <div class="card-header">
+              <div>
+                <h3>Session ready</h3>
+                <p class="flow-card-copy">
+                  You are signed in and can use the session actions below as a
+                  real user would.
+                </p>
+              </div>
+              <button type="button" class="mini-link" data-action="jump-login">
+                Switch account
+              </button>
+            </div>
+            <form id="sessionForm" class="stack">
+              <div class="actions">
+                <button type="button" data-action="me">View profile</button>
+                <button type="button" data-action="refresh">Refresh session</button>
+                <button type="button" data-action="logout">Sign out</button>
+              </div>
+            </form>
+          </section>
+        </section>
+
+        <section class="grid">
+          <article class="panel wide">
+            <h2>Live API response</h2>
+            <pre id="responseBox">No requests yet.</pre>
+          </article>
+
+          <article class="panel wide">
+            <h2>Email preview</h2>
+            <pre id="previewBox">No preview yet.</pre>
+          </article>
+
+          <article class="panel wide">
+            <h2>Session state</h2>
+            <pre id="stateBox">No stored auth state yet.</pre>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="/auth-lab/app.js" type="module"></script>
+  </body>
+</html>

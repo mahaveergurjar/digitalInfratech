@@ -1,0 +1,1 @@
+import { useAuth } from '../../hooks/useAuth'; export default function PartnerDashboard(){ const { user } = useAuth(); return (<div className='card'><h2>Partner Dashboard</h2><p>Welcome, {user?.name}</p></div>); }
