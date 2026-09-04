@@ -1,1 +1,0 @@
-export default function ForgotPassword() { return (<div className='card'><h2>Forgot Password</h2><p>Feature not implemented in this demo.</p></div>); }
