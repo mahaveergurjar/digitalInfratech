@@ -18,6 +18,7 @@
 }
 
 .services-intro p {
+  /* Tab button styles for services page */
   margin-bottom: 0;
 }
 
@@ -230,4 +231,43 @@
   .services-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Tab button styles for services page filter */
+.services-tab-btn {
+  flex-shrink: 0;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+
+.services-tab-btn:hover {
+  border-color: #f97316;
+  color: #f97316;
+  background: #fff7ed;
+}
+
+.services-tab-active {
+  background: #0f172a;
+  color: #fff;
+  border-color: #0f172a;
+}
+
+.services-tab-active:hover {
+  background: #f97316;
+  border-color: #f97316;
+  color: #fff;
+}
+
+.services-tab-inactive {
+  background: #fff;
+  color: #475569;
+  border-color: #e2e8f0;
 }

@@ -1,78 +1,48 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { featuredProducts } from '../../data/siteContent';
-import OrderForm from '../../components/common/OrderForm';
+import { products } from '../../data/mockData';
+import ProductCard from '../../components/products/ProductCard';
 
-const filters = ['All', 'Putty', 'Primer', 'Tools'];
+const filters = ['All', 'Interior Paint', 'Exterior Paint', 'Waterproofing', 'Wood & Metal', 'Decorative Finish'];
 
 export default function Products() {
   const [filter, setFilter] = useState('All');
-  const [showOrderForm, setShowOrderForm] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const products = useMemo(() => {
-    return featuredProducts.filter((item) => filter === 'All' || item.category === filter);
+  const filteredProducts = useMemo(() => {
+    return products.filter((item) => filter === 'All' || item.category === filter);
   }, [filter]);
 
   return (
-    <div className='page-stack'>
-      <section className='section-head'>
-        <div>
-          <span className='eyebrow'>Products</span>
-          <h1>Premium Paint Products</h1>
-          <p className='muted'>Authentic paint products with best prices in Lucknow. Fast delivery, guaranteed quality.</p>
-        </div>
+    <div className="space-y-6">
+      <section className="rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white p-6 sm:p-8">
+        <p className="text-orange-100 font-bold text-xs uppercase tracking-widest mb-2">Full catalogue</p>
+        <h1 className="text-2xl sm:text-3xl font-black mb-2">All painting products</h1>
+        <p className="text-orange-50 text-sm max-w-xl">
+          {filteredProducts.length} products · Authentic brands · {filter === 'All' ? 'Every category' : filter} · Delivered in 40 minutes across Lucknow
+        </p>
       </section>
 
-      <div className='filter-row'>
+      <div className="flex flex-wrap gap-2">
         {filters.map((item) => (
-          <button key={item} type='button' className={`filter-chip${filter === item ? ' active' : ''}`} onClick={() => setFilter(item)}>
+          <button
+            key={item}
+            type="button"
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              filter === item
+                ? 'bg-slate-900 text-white shadow-md'
+                : 'bg-white border border-slate-200 text-slate-700 hover:border-orange-300 hover:text-orange-600'
+            }`}
+            onClick={() => setFilter(item)}
+          >
             {item}
           </button>
         ))}
       </div>
 
-      <section className='product-grid product-grid--wide'>
-        {products.map((product) => (
-          <div key={product.slug} className='product-card card'>
-            <Link to={`/product/${product.slug}`} className='product-card__image product-card__image--tall'>
-              <img src={product.image} alt={product.name} />
-            </Link>
-            <div className='product-card__body'>
-              <span className='tag'>{product.category}</span>
-              <h3>{product.name}</h3>
-              <p>{product.pack}</p>
-              <div className='price-row'>
-                <strong>₹{product.price}</strong>
-                <span>Lucknow base</span>
-              </div>
-              <div className='product-card__actions'>
-                <Link to={`/product/${product.slug}`} className='btn-mini'>Details</Link>
-                <button 
-                  type='button' 
-                  className='btn-mini btn-order'
-                  onClick={() => {
-                    setSelectedProduct(product);
-                    setShowOrderForm(true);
-                  }}
-                >
-                  Order
-                </button>
-              </div>
-            </div>
-          </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+        {filteredProducts.map((product) => (
+          <ProductCard key={product.id} product={product} />
         ))}
-      </section>
-
-      {showOrderForm && selectedProduct && (
-        <OrderForm 
-          product={selectedProduct} 
-          onClose={() => {
-            setShowOrderForm(false);
-            setSelectedProduct(null);
-          }}
-        />
-      )}
+      </div>
     </div>
   );
 }

@@ -25,16 +25,64 @@ const sandpaperSheet = '';
 const servicePainting = '';
 
 export const brand = {
-  name: 'Digital InfraTech Paints',
-  tagline: 'Premium paint products and supplies for your home',
+  name: 'Digital InfraTech Services',
+  shortName: 'Digital InfraTech',
+  tagline: 'Paint supplies & home services — electrician, plumber, painter and more',
   city: 'Lucknow',
-  eta: '40 min delivery'
+  pincode: '226028',
+  eta: '40 min delivery',
+  hours: 'Open 8 am to 8 pm all days',
 };
 
 export const navLinks = [
   { label: 'Home', to: '/' },
   { label: 'Products', to: '/products' },
-  { label: 'Price List', to: '/price-lists' }
+  { label: 'Services', to: '/services' },
+  { label: 'Price List', to: '/price-lists' },
+];
+
+export const searchPlaceholders = [
+  'Interior emulsion',
+  'Wall primer',
+  'Electrician near me',
+  'Plumber for leak repair',
+  'Painter for home',
+  'AC service & repair',
+  'Carpenter for furniture',
+  'Home deep cleaning',
+  'Waterproofing coat',
+  'Wall putty',
+];
+
+export const quickCategories = [
+  { id: 'electrician', label: 'Electrician', icon: '⚡', to: '/services' },
+  { id: 'plumber', label: 'Plumber', icon: '🔧', to: '/services' },
+  { id: 'painter', label: 'Painter', icon: '🖌️', to: '/services' },
+  { id: 'carpenter', label: 'Carpenter', icon: '🪚', to: '/services' },
+  { id: 'ac-repair', label: 'AC Repair', icon: '❄️', to: '/services' },
+  { id: 'cleaning', label: 'Cleaning', icon: '🧹', to: '/services' },
+  { id: 'interior', label: 'Interior Paint', icon: '🏠', to: '/products' },
+  { id: 'exterior', label: 'Exterior Paint', icon: '🌤️', to: '/products' },
+  { id: 'primer', label: 'Primers', icon: '🧱', to: '/products' },
+  { id: 'putty', label: 'Putty', icon: '✨', to: '/products' },
+  { id: 'waterproof', label: 'Waterproofing', icon: '💧', to: '/products' },
+  { id: 'tools', label: 'Brushes & Tools', icon: '🖌️', to: '/products' },
+];
+
+export const trustBenefits = [
+  { icon: '⚡', title: '40 min response', text: 'Across Lucknow' },
+  { icon: '📦', title: 'Pay on delivery', text: 'Verify before you pay' },
+  { icon: '🛡️', title: 'Vetted experts', text: 'Background checked' },
+  { icon: '🚚', title: 'Free delivery', text: 'On orders above ₹500' },
+];
+
+export const testimonials = [
+  { name: 'Rahul S.', area: 'Gomti Nagar', quote: 'Ordered primer and putty — arrived in under an hour. Genuine products, fair prices.' },
+  { name: 'Priya M.', area: 'Indira Nagar', quote: 'Booked interior painting through the site. Clean work and transparent pricing.' },
+  { name: 'Amit K.', area: 'Aliganj', quote: 'Best place in Lucknow for Asian Paints and Birla supplies. Repeat customer now.' },
+  { name: 'Sunita R.', area: 'Hazratganj', quote: 'Called for an electrician at 9 am, the expert was home by 10 am. Fixed the wiring perfectly.' },
+  { name: 'Vikas T.', area: 'Alambagh', quote: 'Plumber arrived quickly for a pipe leak. Professional, quick and charged fairly.' },
+  { name: 'Deepa K.', area: 'Mahanagar', quote: 'AC service was done thoroughly. Gas refilled and cooling is back to 100%. Highly recommend!' },
 ];
 
 export const heroStats = [
