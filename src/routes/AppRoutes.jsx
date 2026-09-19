@@ -8,8 +8,10 @@ import ProductDetail from '../pages/Products/ProductDetail';
 import Services from '../pages/Services/Services';
 import ServiceDetail from '../pages/Services/ServiceDetail';
 import ServiceCategory from '../pages/Services/ServiceCategory';
+import SearchResults from '../pages/Search/SearchResults';
 import AdminLogin from '../pages/Admin/AdminLogin';
 import AdminOrders from '../pages/Admin/AdminOrders';
+import AdminCatalog from '../pages/Admin/AdminCatalog';
 
 const AdminProtected = ({ children }) => {
   const { isAdmin } = useAdminAuth();
@@ -21,6 +23,7 @@ export default function AppRoutes() {
     <Routes>
       <Route path='/admin/login' element={<AdminLogin />} />
       <Route path='/admin' element={<AdminProtected><AdminOrders /></AdminProtected>} />
+      <Route path='/admin/catalog' element={<AdminProtected><AdminCatalog /></AdminProtected>} />
 
       <Route
         path='/*'
@@ -29,6 +32,7 @@ export default function AppRoutes() {
             <Routes>
               <Route path='/' element={<HomePage />} />
               <Route path='/products' element={<Products />} />
+              <Route path='/search' element={<SearchResults />} />
               <Route path='/product/:id' element={<ProductDetail />} />
               <Route path='/services' element={<Services />} />
               <Route path='/services/:slug' element={<ServiceCategory />} />

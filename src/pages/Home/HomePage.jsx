@@ -1,11 +1,12 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { products, serviceCategories } from '../../data/mockData';
-import { brand, trustBenefits, testimonials } from '../../data/siteContent';
+import { brand, testimonials } from '../../data/siteContent';
 import CategoryScrollStrip from '../../components/home/CategoryScrollStrip';
 import ProductCard from '../../components/products/ProductCard';
-
-const dealProducts = products.slice(0, 4);
-const newArrivals = products.slice(4, 12);
+import PageHero from '../../components/common/PageHero';
+import { useCatalog } from '../../context/CatalogContext';
+import { getDealProducts, getNewArrivalProducts } from '../../utils/catalogHelpers';
+import { HERO_IMAGES } from '../../data/heroImages';
 
 const stats = [
   { value: '500+', label: 'Happy Customers', icon: '😊' },
@@ -15,121 +16,66 @@ const stats = [
 ];
 
 export default function HomePage() {
+  const { products, serviceCategories } = useCatalog();
+  const dealProducts = useMemo(() => getDealProducts(products, 4), [products]);
+  const newArrivals = useMemo(
+    () => getNewArrivalProducts(products, 8, dealProducts.map((product) => product.id)),
+    [products, dealProducts],
+  );
+
   return (
     <div className="space-y-10 sm:space-y-14">
 
-      {/* ─── HERO ─── */}
-      <section className="relative overflow-hidden rounded-3xl border border-stone-800/60 surface-dark">
-        {/* Warm accent orbs only */}
-        <div className="hero-orb w-[420px] h-[420px] bg-orange-500/12 top-[-100px] right-[-80px]" />
-        <div className="hero-orb w-[280px] h-[280px] bg-amber-500/8 bottom-[-60px] left-[-40px]" />
-
-        {/* Floating service icons */}
-        <div className="absolute right-8 top-10 hidden lg:flex flex-col gap-3 z-10">
-          {serviceCategories.slice(0, 3).map((cat) => (
-            <div
-              key={cat.id}
-              className="rounded-2xl px-4 py-3 flex items-center gap-3 border border-orange-500/15 bg-stone-900/70 backdrop-blur-sm"
-            >
-              <span className="text-2xl">{cat.icon}</span>
-              <div>
-                <p className="text-stone-100 text-xs font-semibold">{cat.label}</p>
-                <p className="text-stone-400 text-[10px]">{cat.services.length} services</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="absolute right-8 bottom-10 hidden xl:flex flex-col gap-3 z-10">
-          {serviceCategories.slice(3, 6).map((cat) => (
-            <div
-              key={cat.id}
-              className="rounded-2xl px-4 py-3 flex items-center gap-3 border border-orange-500/15 bg-stone-900/70 backdrop-blur-sm"
-            >
-              <span className="text-2xl">{cat.icon}</span>
-              <div>
-                <p className="text-stone-100 text-xs font-semibold">{cat.label}</p>
-                <p className="text-stone-400 text-[10px]">{cat.services.length} services</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="relative z-10 p-5 sm:p-7 lg:p-9 max-w-3xl">
-          <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider mb-4 text-orange-100">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
-            Now live in {brand.city} · {brand.eta}
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-3">
-            Your home, our{' '}
-            <span className="gradient-text-orange">expertise</span>
-          </h1>
-
-          <p className="text-stone-300 text-base sm:text-lg mb-5 max-w-xl leading-relaxed">
-            Electrician · Plumber · Painter · Carpenter · AC Repair · Cleaning — plus premium paint supplies. All in Lucknow.
-          </p>
-
-          <div className="flex flex-wrap gap-2 mb-5">
-            {trustBenefits.map((item) => (
-              <span
-                key={item.title}
-                className="inline-flex items-center gap-1.5 bg-stone-900/50 border border-stone-700/60 rounded-lg px-3 py-1.5 text-xs text-stone-200"
-              >
-                <span className="text-orange-300">{item.icon}</span>
-                <span>
-                  <strong className="font-semibold text-white">{item.title}</strong>
-                  <span className="text-stone-400"> · {item.text}</span>
-                </span>
-              </span>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-2.5">
-            <Link to="/services" className="btn-primary !py-3 !px-5 !text-sm">
+      <PageHero
+        image={HERO_IMAGES.home}
+        kicker={`Now live in ${brand.city} · ${brand.eta}`}
+        title="Your home, our expertise"
+        description="Home services & premium paints in one place — electrician, plumber, painter, carpenter, AC repair, cleaning & more."
+        pills={['Home services', 'Premium paints', 'Pay on delivery', 'Vetted experts']}
+        actions={
+          <div className="page-hero-actions">
+            <Link to="/services" className="btn-primary !py-3 !px-5 !text-sm no-underline">
               Book a service
             </Link>
-            <Link
-              to="/products"
-              className="inline-flex items-center gap-2 bg-transparent hover:bg-white/5 border border-stone-500/70 text-stone-100 font-semibold px-5 py-3 rounded-xl transition-all no-underline hover:border-orange-400/60 text-sm"
-            >
+            <Link to="/products" className="page-hero-btn-secondary">
               Browse paints
             </Link>
           </div>
+        }
+      />
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-6">
-            {stats.map((s) => (
-              <div key={s.label} className="stat-card !py-3 !px-3">
-                <div className="text-sm mb-0.5 text-orange-300">{s.icon}</div>
-                <div className="text-lg sm:text-xl font-black text-white">{s.value}</div>
-                <div className="text-[9px] text-stone-400 font-medium uppercase tracking-wide">{s.label}</div>
-              </div>
-            ))}
+      {/* ─── STATS ─── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {stats.map((s) => (
+          <div key={s.label} className="card-premium p-4 sm:p-5 text-center">
+            <div className="text-xl mb-1">{s.icon}</div>
+            <div className="text-xl sm:text-2xl font-black text-[#4a3728]">{s.value}</div>
+            <div className="text-[10px] text-[#8b7355] font-semibold uppercase tracking-wide mt-1">{s.label}</div>
           </div>
-        </div>
-      </section>
+        ))}
+      </div>
 
       {/* ─── MARQUEE TICKER ─── */}
-      <div className="overflow-hidden rounded-2xl bg-stone-900 border border-stone-800">
-        <div className="animate-marquee flex whitespace-nowrap gap-16 text-sm font-semibold text-stone-200 py-3.5 px-4">
+      <div className="overflow-hidden rounded-2xl bg-gradient-to-r from-[#4a3728] via-[#5c4033] to-[#4a3728] border border-[#6b5344]">
+        <div className="animate-marquee flex whitespace-nowrap gap-16 text-sm font-semibold text-[#f5deb3] py-3.5 px-4">
           {[...Array(2)].map((_, i) => (
             <span key={i} className="flex gap-16">
               <span>Diwali 15% OFF on select paints</span>
-              <span className="text-orange-400">✦</span>
+              <span className="text-[#f5c842]">✦</span>
               <span>Electrician at your door in 2 hrs</span>
-              <span className="text-orange-400">✦</span>
+              <span className="text-[#f5c842]">✦</span>
               <span>Plumber for leaks &amp; pipe repair</span>
-              <span className="text-orange-400">✦</span>
+              <span className="text-[#f5c842]">✦</span>
               <span>Book verified painters online</span>
-              <span className="text-orange-400">✦</span>
+              <span className="text-[#f5c842]">✦</span>
               <span>AC Service &amp; gas refill</span>
-              <span className="text-orange-400">✦</span>
+              <span className="text-[#f5c842]">✦</span>
               <span>Home deep cleaning service</span>
-              <span className="text-orange-400">✦</span>
+              <span className="text-[#f5c842]">✦</span>
               <span>Carpenter for furniture &amp; doors</span>
-              <span className="text-orange-400">✦</span>
+              <span className="text-[#f5c842]">✦</span>
               <span>Pay on delivery available</span>
-              <span className="text-orange-400">✦</span>
+              <span className="text-[#f5c842]">✦</span>
             </span>
           ))}
         </div>
@@ -143,12 +89,12 @@ export default function HomePage() {
         <div className="flex items-end justify-between gap-4 mb-7">
           <div>
             <span className="kicker">🏠 Home Services</span>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#4a3728] leading-tight">
               Book an expert for any home job
             </h2>
-            <p className="text-slate-500 text-sm mt-1.5">Vetted professionals · Pay after service · 30-day warranty</p>
+            <p className="text-[#8b7355] text-sm mt-1.5">Vetted professionals · Pay after service · 30-day warranty</p>
           </div>
-          <Link to="/services" className="shrink-0 inline-flex items-center gap-1.5 text-sm font-bold text-orange-600 hover:text-orange-700 no-underline border border-orange-200 rounded-xl px-4 py-2 hover:bg-orange-50 transition-all">
+          <Link to="/services" className="shrink-0 inline-flex items-center gap-1.5 text-sm font-bold text-[#c05621] hover:text-[#ea7a2a] no-underline border border-[#edd9b8] rounded-xl px-4 py-2 hover:bg-[#fff3d6] transition-all">
             All services →
           </Link>
         </div>
@@ -167,8 +113,8 @@ export default function HomePage() {
                 <span className="text-3xl">{cat.icon}</span>
               </div>
               <div>
-                <p className="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight">{cat.label}</p>
-                <p className="text-[10px] text-slate-400 mt-0.5 font-semibold">{cat.services.length} services</p>
+                <p className="text-sm font-black text-[#4a3728] group-hover:text-[#c05621] transition-colors leading-tight">{cat.label}</p>
+                <p className="text-[10px] text-[#a08060] mt-0.5 font-semibold">{cat.services.length} services</p>
               </div>
             </Link>
           ))}
@@ -180,16 +126,16 @@ export default function HomePage() {
         <div className="flex items-end justify-between gap-4 mb-7">
           <div>
             <span className="kicker">🔥 Limited time</span>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Deals of the week</h2>
-            <p className="text-slate-500 text-sm mt-1.5">Hand-picked paints at our best prices this week</p>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#4a3728]">Deals of the week</h2>
+            <p className="text-[#8b7355] text-sm mt-1.5">Top discounts on paints this week — updated automatically</p>
           </div>
-          <Link to="/products" className="shrink-0 inline-flex items-center gap-1.5 text-sm font-bold text-orange-600 hover:text-orange-700 no-underline border border-orange-200 rounded-xl px-4 py-2 hover:bg-orange-50 transition-all">
+          <Link to="/products" className="shrink-0 inline-flex items-center gap-1.5 text-sm font-bold text-[#c05621] hover:text-[#ea7a2a] no-underline border border-[#edd9b8] rounded-xl px-4 py-2 hover:bg-[#fff3d6] transition-all">
             See all →
           </Link>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
           {dealProducts.map((product) => (
-            <ProductCard key={product.id} product={product} compact />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
@@ -199,30 +145,31 @@ export default function HomePage() {
         <div className="flex items-end justify-between gap-4 mb-7">
           <div>
             <span className="kicker" style={{ color: '#10b981' }}>✨ Just in</span>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900">New arrivals</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#4a3728]">New arrivals</h2>
+            <p className="text-[#8b7355] text-sm mt-1.5">Recently added paints — newest first</p>
           </div>
-          <Link to="/products" className="shrink-0 inline-flex items-center gap-1.5 text-sm font-bold text-orange-600 hover:text-orange-700 no-underline border border-orange-200 rounded-xl px-4 py-2 hover:bg-orange-50 transition-all">
+          <Link to="/products" className="shrink-0 inline-flex items-center gap-1.5 text-sm font-bold text-[#c05621] hover:text-[#ea7a2a] no-underline border border-[#edd9b8] rounded-xl px-4 py-2 hover:bg-[#fff3d6] transition-all">
             View catalogue →
           </Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
           {newArrivals.map((product) => (
-            <ProductCard key={product.id} product={product} compact />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
 
       {/* ─── TESTIMONIALS ─── */}
       <section className="relative overflow-hidden rounded-3xl p-8 sm:p-12"
-        style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #fffbeb 50%, #f0fdf4 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #fff8ed 0%, #fff3d6 50%, #f5deb3 100%)' }}
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-orange-200/30 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-200/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 text-center mb-10">
           <span className="kicker">⭐ Customer stories</span>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Lucknow trusts Digital InfraTech</h2>
-          <p className="text-slate-500 text-sm mt-2">Real reviews from real customers across Lucknow</p>
+          <h2 className="text-2xl sm:text-3xl font-black text-[#4a3728]">Lucknow trusts Digital InfraTech</h2>
+          <p className="text-[#8b7355] text-sm mt-2">Real reviews from real customers across Lucknow</p>
         </div>
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -236,10 +183,10 @@ export default function HomePage() {
                   <span key={s} className="star-filled text-sm">★</span>
                 ))}
               </div>
-              <p className="text-slate-600 text-sm leading-relaxed mb-5 flex-grow italic">
+              <p className="text-[#6b5344] text-sm leading-relaxed mb-5 flex-grow italic">
                 &ldquo;{item.quote}&rdquo;
               </p>
-              <footer className="flex items-center gap-3 pt-4 border-t border-slate-100">
+              <footer className="flex items-center gap-3 pt-4 border-t border-[#f0e4c8]">
                 <span
                   className="w-10 h-10 rounded-full text-white flex items-center justify-center font-black text-sm shadow-sm flex-shrink-0"
                   style={{ background: `linear-gradient(135deg, hsl(${(i * 60 + 20) % 360}, 80%, 55%), hsl(${(i * 60 + 60) % 360}, 80%, 60%))` }}
@@ -247,8 +194,8 @@ export default function HomePage() {
                   {item.name.charAt(0)}
                 </span>
                 <div>
-                  <cite className="not-italic font-bold text-slate-900 text-sm">{item.name}</cite>
-                  <span className="block text-xs text-slate-400 font-medium">{item.area}, Lucknow</span>
+                  <cite className="not-italic font-bold text-[#4a3728] text-sm">{item.name}</cite>
+                  <span className="block text-xs text-[#a08060] font-medium">{item.area}, Lucknow</span>
                 </div>
               </footer>
             </blockquote>

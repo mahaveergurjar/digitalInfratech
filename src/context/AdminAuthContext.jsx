@@ -1,17 +1,15 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { API_URL } from '../config/api';
+import { DEV_ADMIN, isDevAdminToken, parseJsonResponse, parseStoredJson } from '../utils/http';
 
 const STORAGE_TOKEN = 'dit-admin-token';
 const STORAGE_ADMIN = 'dit-admin-user';
-import { API_URL } from '../config/api';
 
 const AdminAuthContext = createContext(null);
 
 export function AdminAuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem(STORAGE_TOKEN));
-  const [admin, setAdmin] = useState(() => {
-    const stored = localStorage.getItem(STORAGE_ADMIN);
-    return stored ? JSON.parse(stored) : null;
-  });
+  const [admin, setAdmin] = useState(() => parseStoredJson(localStorage.getItem(STORAGE_ADMIN)));
 
   useEffect(() => {
     if (token) localStorage.setItem(STORAGE_TOKEN, token);
@@ -24,20 +22,43 @@ export function AdminAuthProvider({ children }) {
   }, [admin]);
 
   const login = async (email, password) => {
-    const response = await fetch(`${API_URL}/admin/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const response = await fetch(`${API_URL}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Login failed');
+      const { data, parseError } = await parseJsonResponse(response);
+
+      if (data && response.ok) {
+        setToken(data.token);
+        setAdmin(data.admin);
+        return data;
+      }
+
+      if (import.meta.env.DEV && email === DEV_ADMIN.email && password === DEV_ADMIN.password) {
+        const devAdmin = { email, name: 'Admin', role: 'admin' };
+        setToken(DEV_ADMIN.token);
+        setAdmin(devAdmin);
+        return { token: DEV_ADMIN.token, admin: devAdmin };
+      }
+
+      throw new Error(data?.message || parseError || 'Login failed');
+    } catch (error) {
+      if (import.meta.env.DEV && email === DEV_ADMIN.email && password === DEV_ADMIN.password) {
+        const devAdmin = { email, name: 'Admin', role: 'admin' };
+        setToken(DEV_ADMIN.token);
+        setAdmin(devAdmin);
+        return { token: DEV_ADMIN.token, admin: devAdmin };
+      }
+
+      throw new Error(
+        error.message === 'Failed to fetch'
+          ? 'Cannot reach API. In local dev use admin@digitalinfratech.in / admin123'
+          : error.message || 'Login failed'
+      );
     }
-
-    setToken(data.token);
-    setAdmin(data.admin);
-    return data;
   };
 
   const logout = () => {
@@ -45,7 +66,10 @@ export function AdminAuthProvider({ children }) {
     setAdmin(null);
   };
 
-  const value = useMemo(() => ({ token, admin, login, logout, isAdmin: Boolean(token) }), [token, admin]);
+  const value = useMemo(
+    () => ({ token, admin, login, logout, isAdmin: Boolean(token) }),
+    [token, admin]
+  );
 
   return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>;
 }
@@ -57,6 +81,15 @@ export function useAdminAuth() {
 }
 
 export function adminFetch(path, token, options = {}) {
+  if (isDevAdminToken(token)) {
+    return Promise.resolve({
+      ok: false,
+      status: 503,
+      json: async () => ({ success: false, message: 'API not available in local dev mode' }),
+      text: async () => '',
+    });
+  }
+
   return fetch(`${API_URL}${path}`, {
     ...options,
     headers: {

@@ -1,6 +1,11 @@
-import { useState } from 'react';
-import { serviceCategories, money } from '../../data/mockData';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { money } from '../../data/mockData';
 import { useCart } from '../../context/CartContext';
+import { useCatalog } from '../../context/CatalogContext';
+import PageHero from '../../components/common/PageHero';
+import { HERO_IMAGES, SERVICE_CATEGORY_HERO_IMAGES } from '../../data/heroImages';
+import { brand } from '../../data/siteContent';
 
 const whyUs = [
   { icon: '✅', title: 'Vetted Experts', text: 'Background-verified & trained professionals only.', color: '#10b981' },
@@ -11,7 +16,29 @@ const whyUs = [
 
 export default function Services() {
   const { addToCart } = useCart();
-  const [activeTab, setActiveTab] = useState('all');
+  const { serviceCategories, loading } = useCatalog();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  const [activeTab, setActiveTab] = useState(categoryParam || 'all');
+
+  useEffect(() => {
+    if (!categoryParam) {
+      setActiveTab('all');
+      return;
+    }
+    if (categoryParam === 'all' || serviceCategories.some((cat) => cat.id === categoryParam)) {
+      setActiveTab(categoryParam);
+    }
+  }, [categoryParam, serviceCategories]);
+
+  const setServiceTab = (tabId) => {
+    setActiveTab(tabId);
+    if (tabId === 'all') {
+      setSearchParams({});
+    } else {
+      setSearchParams({ category: tabId });
+    }
+  };
 
   const displayed =
     activeTab === 'all'
@@ -21,42 +48,13 @@ export default function Services() {
   return (
     <div className="space-y-10">
 
-      {/* ─── HERO ─── */}
-      <section
-        className="relative overflow-hidden rounded-3xl border border-stone-800/60 surface-dark text-white p-8 sm:p-10 lg:p-12"
-      >
-        <div className="hero-orb w-[420px] h-[420px] bg-orange-500/12 top-[-100px] right-[-80px]" />
-        <div className="hero-orb w-[280px] h-[280px] bg-amber-500/8 bottom-[-60px] left-[-40px]" />
-
-        <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider mb-5 text-orange-100">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
-            Home Services · Lucknow
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight mb-4">
-            Book trusted home{' '}
-            <span className="gradient-text-orange">service experts</span>
-          </h1>
-
-          <p className="text-stone-300 text-base sm:text-lg mb-7 leading-relaxed">
-            Electrician, Plumber, Painter, Carpenter, AC Repair &amp; Cleaning — vetted professionals at your doorstep.
-          </p>
-
-          <div className="flex flex-wrap gap-2">
-            {serviceCategories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setActiveTab(cat.id)}
-                className="inline-flex items-center gap-1.5 bg-stone-900/50 hover:bg-stone-900/70 border border-stone-700/60 hover:border-orange-400/40 rounded-lg px-3 py-1.5 text-sm font-semibold text-stone-200 transition-all"
-              >
-                {cat.icon} {cat.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PageHero
+        image={HERO_IMAGES.services}
+        kicker="Home services"
+        title="Trusted experts for every home job"
+        description={`${serviceCategories.length} categories · Vetted professionals · Same-day visit · Across Lucknow`}
+        pills={['Electrician', 'Plumber', 'Painter', '2–4 hr response']}
+      />
 
       {/* ─── WHY CHOOSE US ─── */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -71,8 +69,8 @@ export default function Services() {
             >
               {item.icon}
             </div>
-            <h3 className="font-black text-slate-900 text-sm sm:text-base mb-1.5">{item.title}</h3>
-            <p className="text-slate-500 text-xs sm:text-sm leading-snug">{item.text}</p>
+            <h3 className="font-black text-[#4a3728] text-sm sm:text-base mb-1.5">{item.title}</h3>
+            <p className="text-[#8b7355] text-xs sm:text-sm leading-snug">{item.text}</p>
           </div>
         ))}
       </section>
@@ -81,7 +79,7 @@ export default function Services() {
       <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
         <button
           type="button"
-          onClick={() => setActiveTab('all')}
+          onClick={() => setServiceTab('all')}
           className={`services-tab-btn ${activeTab === 'all' ? 'services-tab-active' : 'services-tab-inactive'}`}
         >
           🏠 All Services
@@ -90,7 +88,7 @@ export default function Services() {
           <button
             key={cat.id}
             type="button"
-            onClick={() => setActiveTab(cat.id)}
+            onClick={() => setServiceTab(cat.id)}
             className={`services-tab-btn ${activeTab === cat.id ? 'services-tab-active' : 'services-tab-inactive'}`}
           >
             {cat.icon} {cat.label}
@@ -99,56 +97,55 @@ export default function Services() {
       </div>
 
       {/* ─── SERVICE SECTIONS ─── */}
-      {displayed.map((cat) => (
-        <section key={cat.id} className="overflow-hidden rounded-3xl border border-slate-100 shadow-sm">
+      {loading ? (
+        <p className="text-[#8b7355] text-center py-12">Loading services...</p>
+      ) : (
+      displayed.map((cat) => (
+        <section key={cat.id} className="service-section">
 
           {/* Category header */}
-          <div className={`relative overflow-hidden px-7 py-7 sm:px-10 sm:py-8 bg-gradient-to-r ${cat.color} text-white`}>
-            <div className="absolute right-0 top-0 bottom-0 w-48 opacity-10"
-              style={{ background: 'radial-gradient(circle at right, white, transparent)' }}
+          <div className="relative overflow-hidden px-7 py-7 sm:px-10 sm:py-8 text-white min-h-[140px]">
+            <img
+              src={SERVICE_CATEGORY_HERO_IMAGES[cat.id] || HERO_IMAGES.services}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
             />
+            <div className="service-category-overlay" />
             <div className="relative z-10 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-3xl bg-white/20 backdrop-blur flex items-center justify-center text-4xl shadow-inner border border-white/20 flex-shrink-0">
+              <div className="w-16 h-16 rounded-3xl bg-[#fff8ed]/20 backdrop-blur flex items-center justify-center text-4xl shadow-inner border border-[#f5deb3]/25 flex-shrink-0">
                 {cat.icon}
               </div>
               <div>
-                <h2 className="text-2xl sm:text-3xl font-black mb-1">{cat.label}</h2>
-                <p className="text-white/80 text-sm font-medium">{cat.description}</p>
+                <h2 className="text-2xl sm:text-3xl font-black mb-1 text-[#fffcf7]">{cat.label}</h2>
+                <p className="text-[#f5deb3] text-sm font-medium">{cat.description}</p>
               </div>
             </div>
           </div>
 
           {/* Service cards */}
-          <div className="bg-white p-6 sm:p-8">
+          <div className="service-section-body">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
               {cat.services.map((service) => (
-                <article
-                  key={service.id}
-                  className="group relative rounded-2xl border border-slate-100 bg-gradient-to-b from-slate-50 to-white hover:border-slate-200 hover:shadow-xl transition-all p-5 flex flex-col overflow-hidden"
-                >
-                  {/* Top accent line */}
-                  <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${cat.color} opacity-0 group-hover:opacity-100 transition-opacity`} />
-
-                  {/* Emoji icon */}
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl mb-4 transition-transform group-hover:scale-110 bg-gradient-to-br ${cat.bgLight} ${cat.borderLight} border`}>
+                <article key={service.id} className="service-card group">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl mb-4 transition-transform group-hover:scale-110 bg-[#fff3d6] border border-[#edd9b8]`}>
                     {service.emoji}
                   </div>
 
-                  <h3 className="font-black text-slate-900 text-base mb-1 leading-tight">{service.name}</h3>
-                  <p className="text-slate-500 text-xs mb-4 flex-grow font-medium">{service.summary}</p>
+                  <h3 className="font-black text-[#4a3728] text-base mb-1 leading-tight">{service.name}</h3>
+                  <p className="text-[#8b7355] text-xs mb-4 flex-grow font-medium">{service.summary}</p>
 
-                  <div className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase px-2.5 py-1.5 rounded-xl mb-4 self-start ${cat.bgLight} ${cat.textColor}`}>
+                  <div className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase px-2.5 py-1.5 rounded-xl mb-4 self-start bg-[#fff3d6] text-[#8b6914] border border-[#edd9b8]">
                     {cat.icon} {cat.label}
                   </div>
 
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-[#f0e4c8]">
                     <div>
-                      <span className="block text-[10px] text-slate-400 uppercase font-bold tracking-wide">From</span>
-                      <strong className="text-xl font-black text-slate-900">{money.format(service.price)}</strong>
+                      <span className="block text-[10px] text-[#a08060] uppercase font-bold tracking-wide">From</span>
+                      <strong className="text-xl font-black text-[#4a3728]">{money.format(service.price)}</strong>
                     </div>
                     <button
                       type="button"
-                      className="bg-gradient-to-r from-slate-900 to-slate-800 group-hover:from-orange-500 group-hover:to-amber-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md"
+                      className="product-card-btn-primary text-xs px-5 py-2.5"
                       onClick={() => addToCart({ ...service, type: 'service' })}
                     >
                       Book →
@@ -159,7 +156,8 @@ export default function Services() {
             </div>
           </div>
         </section>
-      ))}
+      ))
+      )}
 
       {/* ─── BOTTOM CTA ─── */}
       <section
@@ -176,7 +174,7 @@ export default function Services() {
             Describe your problem and our team will match you with the right expert. No commitment, no upfront payment.
           </p>
           <a
-            href="mailto:support@digitalinfratech.in"
+            href={`mailto:${brand.supportEmail}`}
             className="inline-flex items-center gap-2.5 bg-white text-orange-600 font-black px-8 py-4 rounded-2xl hover:bg-orange-50 transition-all no-underline shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transform text-base"
           >
             📧 Contact us for free advice
