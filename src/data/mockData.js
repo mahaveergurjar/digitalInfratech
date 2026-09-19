@@ -1,10 +1,7 @@
-const assetModules = import.meta.glob('../assets/*.{png,jpg,jpeg,webp}', {
-  eager: true,
-  import: 'default',
-});
+import { resolveProductImage } from './productImages';
 
-export const heroPaint = assetModules['../assets/hero-paint-reference.png'] || Object.values(assetModules)[0] || '';
-export const servicePainting = assetModules['../assets/service-painting.png'] || heroPaint;
+export const heroPaint = '/hero/home-hero.png';
+export const servicePainting = '/hero/service-painting.png';
 
 export const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
@@ -22,39 +19,40 @@ const productNames = [
   'Home Refresh Colour'
 ];
 
-export const uploadedImages = Object.entries(assetModules).map(([key, src], index) => {
-  const name = productNames[index % productNames.length];
-  const categoryList = ['Interior Paint', 'Exterior Paint', 'Waterproofing', 'Wood & Metal', 'Decorative Finish'];
+const categoryList = ['Interior Paint', 'Exterior Paint', 'Waterproofing', 'Wood & Metal', 'Decorative Finish'];
 
-  return {
+export const uploadedImages = productNames.map((name, index) => ({
+  id: `paint-${index + 1}`,
+  type: 'product',
+  category: categoryList[index % categoryList.length],
+  name,
+  pack: 'Approx. 5L / 10L pack',
+  price: 550 + (index % 8) * 220,
+  originalPrice: 650 + (index % 9) * 260,
+  image: resolveProductImage({
     id: `paint-${index + 1}`,
-    type: 'product',
+    name,
     category: categoryList[index % categoryList.length],
-    name: name,
-    pack: 'Approx. 5L / 10L pack',
-    price: 550 + (index % 8) * 220,
-    originalPrice: 650 + (index % 9) * 260,
-    image: src,
-  };
-});
+  }, index),
+}));
 
 export const heroSlides = [
   { id: 'hero-1', image: uploadedImages[0]?.image || heroPaint, title: 'Luxury wall finishes', text: 'Diwali 15% OFF on premium painting essentials' },
 ];
 
 export const categories = [
-  { id: 'interior', name: 'Interior Finishes', image: uploadedImages[2]?.image || heroPaint },
-  { id: 'exterior', name: 'Exterior Protection', image: uploadedImages[3]?.image || heroPaint },
-  { id: 'waterproof', name: 'Waterproofing', image: uploadedImages[4]?.image || heroPaint },
-  { id: 'wooden', name: 'Wood & Metal', image: uploadedImages[5]?.image || heroPaint },
+  { id: 'interior', name: 'Interior Finishes', image: uploadedImages[0]?.image || heroPaint },
+  { id: 'exterior', name: 'Exterior Protection', image: uploadedImages[1]?.image || heroPaint },
+  { id: 'waterproof', name: 'Waterproofing', image: uploadedImages[2]?.image || heroPaint },
+  { id: 'wooden', name: 'Wood & Metal', image: uploadedImages[3]?.image || heroPaint },
 ];
 
-export const products = uploadedImages.slice(0, Math.min(uploadedImages.length, 30));
+export const products = uploadedImages;
 
 export const paintingServices = [
   { id: 'interior-service', type: 'service', name: 'Interior Painting', summary: '2BHK painting package', price: 7999, image: servicePainting, category: 'painter' },
-  { id: 'exterior-service', type: 'service', name: 'Exterior Painting', summary: 'Weatherproof exterior finish', price: 11999, image: uploadedImages[6]?.image || servicePainting, category: 'painter' },
-  { id: 'wall-repair-service', type: 'service', name: 'Wall Repair & Finish', summary: 'Surface prep + premium coating', price: 6999, image: uploadedImages[7]?.image || servicePainting, category: 'painter' },
+  { id: 'exterior-service', type: 'service', name: 'Exterior Painting', summary: 'Weatherproof exterior finish', price: 11999, image: uploadedImages[2]?.image || servicePainting, category: 'painter' },
+  { id: 'wall-repair-service', type: 'service', name: 'Wall Repair & Finish', summary: 'Surface prep + premium coating', price: 6999, image: uploadedImages[3]?.image || servicePainting, category: 'painter' },
 ];
 
 export const serviceCategories = [

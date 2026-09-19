@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
+import AdminLayout from './AdminLayout';
 import { adminFetch, useAdminAuth } from '../../context/AdminAuthContext';
 import { money } from '../../data/mockData';
+import { isDevAdminToken, parseJsonResponse } from '../../utils/http';
 
 const statusOptions = [
   { value: 'pending', label: 'Pending', color: 'bg-amber-100 text-amber-800' },
@@ -15,7 +17,7 @@ function statusClass(status) {
 }
 
 export default function AdminOrders() {
-  const { token, admin, logout, isAdmin } = useAdminAuth();
+  const { token, isAdmin } = useAdminAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -25,10 +27,17 @@ export default function AdminOrders() {
     setLoading(true);
     setError('');
 
+    if (isDevAdminToken(token)) {
+      setOrders([]);
+      setError('Orders load from database on deployed site. Local dev shows catalog only.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await adminFetch('/admin/orders', token);
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Failed to load orders');
+      const { data, parseError } = await parseJsonResponse(response);
+      if (!data || !response.ok) throw new Error(data?.message || parseError || 'Failed to load orders');
       setOrders(data.orders || []);
     } catch (err) {
       setError(err.message || 'Could not load orders');
@@ -47,8 +56,8 @@ export default function AdminOrders() {
         method: 'PATCH',
         body: JSON.stringify({ status }),
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Update failed');
+      const { data, parseError } = await parseJsonResponse(response);
+      if (!data || !response.ok) throw new Error(data?.message || parseError || 'Update failed');
 
       setOrders((current) =>
         current.map((order) => (order._id === orderId ? { ...order, status } : order))
@@ -63,33 +72,16 @@ export default function AdminOrders() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-100">
-      <header className="surface-dark border-b border-stone-800">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-black text-white">Orders Dashboard</h1>
-            <p className="text-stone-400 text-sm">{admin?.email}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={loadOrders}
-              className="text-sm font-semibold text-stone-200 border border-stone-600 px-4 py-2 rounded-xl hover:bg-stone-800 transition-colors"
-            >
-              Refresh
-            </button>
-            <button
-              type="button"
-              onClick={logout}
-              className="text-sm font-semibold text-white bg-orange-600 hover:bg-orange-500 px-4 py-2 rounded-xl transition-colors"
-            >
-              Logout
-            </button>
-          </div>
+    <AdminLayout title="Orders Dashboard">
+        <div className="flex justify-end mb-4">
+          <button
+            type="button"
+            onClick={loadOrders}
+            className="text-sm font-semibold text-stone-700 border border-stone-200 bg-white px-4 py-2 rounded-xl hover:bg-stone-50 transition-colors"
+          >
+            Refresh
+          </button>
         </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-2xl border border-stone-200 p-5">
             <p className="text-xs font-bold uppercase tracking-wide text-stone-500">Total orders</p>
@@ -205,7 +197,6 @@ export default function AdminOrders() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+    </AdminLayout>
   );
 }

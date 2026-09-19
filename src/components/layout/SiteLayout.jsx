@@ -9,9 +9,9 @@ export default function SiteLayout({ children }) {
   const { toast } = useCart();
 
   return (
-    <div className="mesh-bg min-h-screen" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif" }}>
+    <div className="mesh-bg paint-wash min-h-screen" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif" }}>
       <SiteHeader />
-      <main className="container mx-auto px-4 lg:px-8 py-8 max-w-7xl">
+      <main className="relative z-[1] container mx-auto px-4 lg:px-8 py-8 max-w-7xl">
         {children}
       </main>
       <SiteFooter />
@@ -21,7 +21,7 @@ export default function SiteLayout({ children }) {
 
       {/* Toast notification */}
       <div
-        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-3.5 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-3 transition-all duration-400 transform border border-white/10 ${
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-gradient-to-r from-[#4a3728] to-[#5c4033] text-white px-6 py-3.5 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-3 transition-all duration-400 transform border border-[#f5deb3]/20 ${
           toast ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0 pointer-events-none'
         }`}
       >

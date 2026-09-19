@@ -1,50 +1,75 @@
 import { Link } from 'react-router-dom';
-import { quickCategories } from '../../data/siteContent';
+import { paintCategories, paintCategoryLink } from '../../data/siteContent';
+import { useCatalog } from '../../context/CatalogContext';
 
-const catColors = [
-  'from-yellow-100 to-amber-100 border-yellow-200 text-yellow-700',
-  'from-blue-100 to-cyan-100 border-blue-200 text-blue-700',
-  'from-orange-100 to-red-100 border-orange-200 text-orange-700',
-  'from-amber-100 to-yellow-100 border-amber-200 text-amber-800',
-  'from-sky-100 to-blue-100 border-sky-200 text-sky-700',
-  'from-emerald-100 to-green-100 border-emerald-200 text-emerald-700',
-  'from-indigo-100 to-violet-100 border-indigo-200 text-indigo-700',
-  'from-pink-100 to-rose-100 border-pink-200 text-pink-700',
-  'from-teal-100 to-cyan-100 border-teal-200 text-teal-700',
-  'from-orange-100 to-amber-100 border-orange-200 text-orange-700',
-  'from-violet-100 to-purple-100 border-violet-200 text-violet-700',
-  'from-green-100 to-emerald-100 border-green-200 text-green-700',
-];
+function countProductsInCategory(products, category) {
+  if (category.filterType === 'category') {
+    return products.filter((product) => product.category === category.filter).length;
+  }
+
+  if (category.filterType === 'name') {
+    const pattern = new RegExp(category.filter, 'i');
+    return products.filter((product) => pattern.test(product.name)).length;
+  }
+
+  return 0;
+}
+
+function categoryLink(category) {
+  return paintCategoryLink(category);
+}
 
 export default function CategoryScrollStrip() {
+  const { products } = useCatalog();
+
   return (
-    <section className="card-premium p-5 sm:p-6">
-      <div className="flex items-center justify-between mb-5">
+    <section>
+      <div className="flex items-end justify-between gap-4 mb-7">
         <div>
-          <span className="kicker">🗂️ Categories</span>
-          <h2 className="text-lg sm:text-xl font-black text-slate-900 leading-tight">Shop &amp; book by category</h2>
+          <span className="kicker">🎨 Paint catalogue</span>
+          <h2 className="text-2xl sm:text-3xl font-black text-[#4a3728] leading-tight">
+            Shop paints by category
+          </h2>
+          <p className="text-[#8b7355] text-sm mt-1.5">Premium brands · 40 min delivery · Pay on delivery</p>
         </div>
-        <Link to="/products" className="text-sm font-bold text-orange-600 hover:text-orange-700 no-underline border border-orange-200 rounded-xl px-3 py-1.5 hover:bg-orange-50 transition-all">
-          View all →
+        <Link
+          to="/products"
+          className="shrink-0 inline-flex items-center gap-1.5 text-sm font-bold text-[#c05621] hover:text-[#ea7a2a] no-underline border border-[#edd9b8] rounded-xl px-4 py-2 hover:bg-[#fff3d6] transition-all"
+        >
+          All paints →
         </Link>
       </div>
-      <div className="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-1">
-        {quickCategories.map((cat, i) => (
-          <Link
-            key={cat.id}
-            to={cat.to}
-            className={`flex flex-col items-center gap-2.5 min-w-[5.5rem] sm:min-w-[6.5rem] no-underline group`}
-          >
-            <span
-              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl bg-gradient-to-br border group-hover:scale-110 group-hover:shadow-md transition-all ${catColors[i % catColors.length]}`}
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-4">
+        {paintCategories.map((category) => {
+          const productCount = countProductsInCategory(products, category);
+
+          return (
+            <Link
+              key={category.id}
+              to={categoryLink(category)}
+              className="group relative card-premium no-underline text-center p-5 flex flex-col items-center gap-3 overflow-hidden"
             >
-              {cat.icon}
-            </span>
-            <span className="text-[11px] sm:text-xs font-bold text-slate-700 text-center leading-tight group-hover:text-orange-600 transition-colors">
-              {cat.label}
-            </span>
-          </Link>
-        ))}
+              <div className={`absolute top-0 left-0 right-0 h-1 rounded-t-[20px] bg-gradient-to-r ${category.color}`} />
+              <div
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform bg-gradient-to-br ${category.color} shadow-sm`}
+                style={{
+                  background: `linear-gradient(135deg, rgba(var(--tw-gradient-from-position),0.12), rgba(var(--tw-gradient-to-position),0.08))`,
+                }}
+              >
+                <span className="text-3xl">{category.icon}</span>
+              </div>
+              <div>
+                <p className="text-sm font-black text-[#4a3728] group-hover:text-[#c05621] transition-colors leading-tight">
+                  {category.label}
+                </p>
+                <p className="text-[10px] text-[#a08060] mt-0.5 font-semibold">
+                  {productCount} {productCount === 1 ? 'product' : 'products'}
+                </p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

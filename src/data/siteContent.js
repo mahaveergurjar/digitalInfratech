@@ -30,11 +30,12 @@ export const brand = {
   tagline:
     "Paint supplies & home services — electrician, plumber, painter and more",
   city: "Lucknow",
-  pincode: "226028",
+  pincode: "226002",
   eta: "40 min delivery",
   hours: "Open 8 am to 8 pm all days",
-  whatsapp: "917051514790",
-  supportEmail: "rajsonicareer01@gmail.com",
+  phone: "+91 6390510111",
+  whatsapp: "+91 6390310111",
+  supportEmail: "support@digitalinfratech.in",
 };
 
 export const navLinks = [
@@ -56,20 +57,54 @@ export const searchPlaceholders = [
   "Wall putty",
 ];
 
-export const quickCategories = [
+export const paintCategories = [
+  { id: "interior", label: "Interior Paint", icon: "🏠", to: "/products", color: "from-orange-500 to-amber-500", filterType: "category", filter: "Interior Paint" },
+  { id: "exterior", label: "Exterior Paint", icon: "🌤️", to: "/products", color: "from-sky-500 to-blue-600", filterType: "category", filter: "Exterior Paint" },
+  { id: "waterproof", label: "Waterproofing", icon: "💧", to: "/products", color: "from-cyan-600 to-teal-600", filterType: "category", filter: "Waterproofing" },
+  { id: "wood-metal", label: "Wood & Metal", icon: "🔩", to: "/products", color: "from-amber-700 to-yellow-700", filterType: "category", filter: "Wood & Metal" },
+  { id: "decorative", label: "Decorative", icon: "🎨", to: "/products", color: "from-rose-500 to-pink-600", filterType: "category", filter: "Decorative Finish" },
+  { id: "primer", label: "Primers", icon: "🧱", to: "/products", color: "from-slate-500 to-slate-600", filterType: "name", filter: "primer" },
+  { id: "putty", label: "Putty", icon: "✨", to: "/products", color: "from-stone-500 to-stone-600", filterType: "name", filter: "putty" },
+];
+
+export const serviceQuickCategories = [
   { id: "electrician", label: "Electrician", icon: "⚡", to: "/services" },
   { id: "plumber", label: "Plumber", icon: "🔧", to: "/services" },
   { id: "painter", label: "Painter", icon: "🖌️", to: "/services" },
   { id: "carpenter", label: "Carpenter", icon: "🪚", to: "/services" },
   { id: "ac-repair", label: "AC Repair", icon: "❄️", to: "/services" },
   { id: "cleaning", label: "Cleaning", icon: "🧹", to: "/services" },
-  { id: "interior", label: "Interior Paint", icon: "🏠", to: "/products" },
-  { id: "exterior", label: "Exterior Paint", icon: "🌤️", to: "/products" },
-  { id: "primer", label: "Primers", icon: "🧱", to: "/products" },
-  { id: "putty", label: "Putty", icon: "✨", to: "/products" },
-  { id: "waterproof", label: "Waterproofing", icon: "💧", to: "/products" },
-  { id: "tools", label: "Brushes & Tools", icon: "🖌️", to: "/products" },
 ];
+
+export function paintCategoryLink(category) {
+  if (category.filterType === 'category') {
+    return `/products?category=${encodeURIComponent(category.filter)}`;
+  }
+  if (category.filterType === 'name') {
+    return `/products?name=${encodeURIComponent(category.filter)}`;
+  }
+  return category.to;
+}
+
+export function serviceCategoryLink(category) {
+  return `/services?category=${encodeURIComponent(category.id)}`;
+}
+
+export function isPaintCategoryActive(category, search) {
+  const params = new URLSearchParams(search);
+  if (category.filterType === 'category') {
+    return params.get('category') === category.filter;
+  }
+  if (category.filterType === 'name') {
+    return params.get('name') === category.filter;
+  }
+  return false;
+}
+
+export function isServiceCategoryActive(category, search) {
+  const params = new URLSearchParams(search);
+  return params.get('category') === category.id;
+}
 
 export const trustBenefits = [
   { icon: "⚡", title: "40 min response", text: "Across Lucknow" },

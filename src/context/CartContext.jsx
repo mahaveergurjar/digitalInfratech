@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useMemo, useEffect } from '
 import { brand } from '../data/siteContent';
 import { buildWhatsAppOrderMessage, getWhatsAppUrl } from '../utils/whatsapp';
 import { API_URL } from '../config/api';
+import { parseJsonResponse } from '../utils/http';
 
 const CartContext = createContext();
 
@@ -118,10 +119,10 @@ export function CartProvider({ children }) {
         }),
       });
 
-      const data = await response.json();
+      const { data, parseError } = await parseJsonResponse(response);
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Order could not be placed');
+      if (!data || !response.ok) {
+        throw new Error(data?.message || parseError || 'Order could not be placed');
       }
 
       const cartSnapshot = [...cart];
