@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { brand } from "../../data/siteContent";
+import { brand, socialLinks } from "../../data/siteContent";
 import { getWhatsAppUrl } from "../../utils/whatsapp";
 const serviceLinks = [
   { label: "⚡ Electrician", to: "/services" },
@@ -168,17 +168,30 @@ export default function SiteFooter() {
                 </address>
               </li>
               <li>
-                <div className="flex gap-3 mt-2">
-                  <span className="w-9 h-9 rounded-xl bg-[#4a3728]/60 border border-[#6b5344]/60 flex items-center justify-center text-sm cursor-pointer hover:bg-[#5c4033] transition-colors">
-                    📘
-                  </span>
-                  <span className="w-9 h-9 rounded-xl bg-[#4a3728]/60 border border-[#6b5344]/60 flex items-center justify-center text-sm cursor-pointer hover:bg-[#5c4033] transition-colors">
-                    📸
-                  </span>
-                  <span className="w-9 h-9 rounded-xl bg-[#4a3728]/60 border border-[#6b5344]/60 flex items-center justify-center text-sm cursor-pointer hover:bg-[#5c4033] transition-colors">
-                    💬
-                  </span>
+                <span className="block text-[#a08060] text-xs font-bold uppercase tracking-wide mb-2">
+                  Follow us
+                </span>
+                <div className="flex flex-wrap gap-3">
+                  {socialLinks.map((item) => (
+                    <a
+                      key={item.id}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={item.label}
+                      aria-label={`${item.label} — Digital InfraTech`}
+                      className="w-9 h-9 rounded-xl bg-[#4a3728]/60 border border-[#6b5344]/60 flex items-center justify-center text-sm hover:bg-[#5c4033] hover:border-[#e8a838]/40 transition-colors no-underline"
+                    >
+                      {item.icon}
+                    </a>
+                  ))}
                 </div>
+                <a
+                  href={brand.website}
+                  className="inline-block mt-3 text-xs text-[#c4a882] hover:text-[#f5c842] no-underline transition-colors font-medium"
+                >
+                  {brand.website.replace(/^https?:\/\//, "")}
+                </a>
               </li>
             </ul>
           </div>

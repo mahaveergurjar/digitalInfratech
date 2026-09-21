@@ -5,6 +5,9 @@ import { money } from '../../data/mockData';
 import { useCart } from '../../context/CartContext';
 import { useCatalog } from '../../context/CatalogContext';
 import { searchCatalog } from '../../utils/search';
+import PageSeo from '../../components/seo/PageSeo';
+import ServiceMedia from '../../components/services/ServiceMedia';
+import { brand } from '../../data/siteContent';
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
@@ -19,8 +22,20 @@ export default function SearchResults() {
 
   const totalResults = productResults.length + serviceResults.length;
 
+  const seoPath = query ? `/search?q=${encodeURIComponent(query)}` : '/search';
+
   return (
     <div className="space-y-8">
+      <PageSeo
+        title={query ? `Search: ${query}` : 'Search'}
+        description={
+          query
+            ? `Find paints and home services matching "${query}" in ${brand.city}.`
+            : `Search paints, primers, electricians, plumbers and more in ${brand.city}.`
+        }
+        path={seoPath}
+        noindex={Boolean(query)}
+      />
       <section className="rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white p-6 sm:p-8">
         <p className="text-orange-100 font-bold text-xs uppercase tracking-widest mb-2">Search</p>
         <h1 className="text-2xl sm:text-3xl font-black mb-2">
@@ -68,7 +83,9 @@ export default function SearchResults() {
             {serviceResults.map((service) => (
               <article key={service.id} className="card-premium p-5 flex flex-col">
                 <div className="flex items-start gap-3 mb-3">
-                  <span className="text-2xl">{service.emoji || '🛠️'}</span>
+                  <div className="w-20 h-20 shrink-0 overflow-hidden rounded-xl border border-slate-100 bg-slate-50">
+                    <ServiceMedia service={service} variant="thumb" className="w-full h-full object-cover" />
+                  </div>
                   <div>
                     <h3 className="font-black text-slate-900">{service.name}</h3>
                     <p className="text-sm text-slate-500 mt-1">{service.summary}</p>

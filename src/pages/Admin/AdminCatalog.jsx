@@ -4,6 +4,7 @@ import AdminLayout from './AdminLayout';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import { useCatalog } from '../../context/CatalogContext';
 import { money } from '../../data/mockData';
+import { getServiceImageUrl, resolveServiceImage } from '../../utils/serviceImage';
 import { PRODUCT_CATEGORIES, SERVICE_CATEGORY_META } from '../../data/serviceCategoryMeta';
 import { getDiscountPercent } from '../../utils/catalogHelpers';
 
@@ -21,7 +22,6 @@ const emptyServiceForm = {
   summary: '',
   category: SERVICE_CATEGORY_META[0].id,
   price: '',
-  emoji: '🛠️',
   image: '',
 };
 
@@ -136,7 +136,6 @@ export default function AdminCatalog() {
       summary: item.summary,
       category: item.category,
       price: String(item.price),
-      emoji: item.emoji || '🛠️',
       image: item.image || '',
     });
     setError('');
@@ -325,26 +324,18 @@ export default function AdminCatalog() {
                     <option key={cat.id} value={cat.id}>{cat.label}</option>
                   ))}
                 </select>
-                <div className="grid grid-cols-2 gap-3">
-                  <input
-                    type="number"
-                    min="0"
-                    className="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm"
-                    placeholder="Price"
-                    value={serviceForm.price}
-                    onChange={(e) => setServiceForm({ ...serviceForm, price: e.target.value })}
-                    required
-                  />
-                  <input
-                    className="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm"
-                    placeholder="Emoji"
-                    value={serviceForm.emoji}
-                    onChange={(e) => setServiceForm({ ...serviceForm, emoji: e.target.value })}
-                  />
-                </div>
+                <input
+                  type="number"
+                  min="0"
+                  className="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm"
+                  placeholder="Price"
+                  value={serviceForm.price}
+                  onChange={(e) => setServiceForm({ ...serviceForm, price: e.target.value })}
+                  required
+                />
                 <input
                   className="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm"
-                  placeholder="Image URL (optional)"
+                  placeholder="Image URL (optional — category photo used if empty)"
                   value={serviceForm.image}
                   onChange={(e) => setServiceForm({ ...serviceForm, image: e.target.value })}
                 />
@@ -403,15 +394,21 @@ export default function AdminCatalog() {
                       }`}
                     >
                       <div className="flex items-start gap-3 min-w-0">
-                        {item.image ? (
+                        {tab === 'services' ? (
                           <img
-                            src={item.image}
+                            src={resolveServiceImage(item)}
+                            alt=""
+                            className="w-12 h-12 rounded-lg object-cover border border-stone-100 shrink-0"
+                          />
+                        ) : item.image ? (
+                          <img
+                            src={getServiceImageUrl(item.image)}
                             alt=""
                             className="w-12 h-12 rounded-lg object-cover border border-stone-100 shrink-0"
                           />
                         ) : (
-                          <span className="w-12 h-12 rounded-lg bg-stone-100 flex items-center justify-center text-xl shrink-0">
-                            {item.emoji || '📦'}
+                          <span className="w-12 h-12 rounded-lg bg-stone-100 flex items-center justify-center text-xs text-stone-400 shrink-0 font-bold">
+                            N/A
                           </span>
                         )}
                         <div className="min-w-0">

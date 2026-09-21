@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
+import PageSeo from '../../components/seo/PageSeo';
 
 export default function AdminLogin() {
   const { login, isAdmin } = useAdminAuth();
@@ -29,6 +30,8 @@ export default function AdminLogin() {
   };
 
   return (
+    <>
+    <PageSeo title="Admin login" description="Digital InfraTech admin." path="/admin/login" noindex />
     <div className="min-h-screen surface-dark flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
         <div className="surface-dark p-8 text-center border-b border-stone-800">
@@ -75,5 +78,6 @@ export default function AdminLogin() {
         </form>
       </div>
     </div>
+    </>
   );
 }

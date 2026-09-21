@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { money } from '../../data/mockData';
 import { useCart } from '../../context/CartContext';
+import { resolveServiceImage } from '../../utils/serviceImage';
 
 export default function CartDrawer() {
   const {
@@ -48,7 +49,13 @@ export default function CartDrawer() {
               {cart.map((item) => (
                 <div key={`${item.type}-${item.id}`} className="flex gap-4 pb-6 border-b border-gray-100 last:border-0 last:pb-0">
                   <div className="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center p-2 flex-shrink-0 border border-gray-100">
-                    <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain mix-blend-multiply" />
+                    <img
+                      src={item.type === 'service' ? resolveServiceImage(item) : item.image}
+                      alt={item.name}
+                      className={`max-w-full max-h-full ${
+                        item.type === 'service' ? 'object-cover rounded-lg' : 'object-contain mix-blend-multiply'
+                      }`}
+                    />
                   </div>
                   <div className="flex-1 flex flex-col">
                     <div className="flex justify-between gap-2 mb-1">

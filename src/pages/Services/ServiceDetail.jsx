@@ -1,5 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
-import { serviceCards } from '../../data/siteContent';
+import { brand, serviceCards } from '../../data/siteContent';
+import PageSeo from '../../components/seo/PageSeo';
+import { serviceJsonLd } from '../../config/seo';
 
 export default function ServiceDetail() {
   const { slug } = useParams();
@@ -7,14 +9,24 @@ export default function ServiceDetail() {
 
   if (!service) {
     return (
-      <div className='empty-state card'>
-        <h2>Service not found</h2>
-        <Link to='/services' className='btn-primary'>Back to services</Link>
-      </div>
+      <>
+        <PageSeo title="Service not found" description={`Home services in ${brand.city}.`} path="/services" noindex />
+        <div className='empty-state card'>
+          <h2>Service not found</h2>
+          <Link to='/services' className='btn-primary'>Back to services</Link>
+        </div>
+      </>
     );
   }
 
   return (
+    <>
+    <PageSeo
+      title={service.name}
+      description={`${service.summary} Available in ${brand.city}.`}
+      path={`/service/${service.slug}`}
+      jsonLd={serviceJsonLd(service)}
+    />
     <div className='detail-layout'>
       <section className='detail-media card'>
         <img src={service.image} alt={service.name} />
@@ -47,5 +59,6 @@ export default function ServiceDetail() {
         </div>
       </section>
     </div>
+    </>
   );
 }

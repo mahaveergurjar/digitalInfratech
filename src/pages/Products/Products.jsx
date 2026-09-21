@@ -4,6 +4,8 @@ import ProductCard from '../../components/products/ProductCard';
 import PageHero from '../../components/common/PageHero';
 import { useCatalog } from '../../context/CatalogContext';
 import { HERO_IMAGES } from '../../data/heroImages';
+import PageSeo from '../../components/seo/PageSeo';
+import { brand } from '../../data/siteContent';
 
 const filters = ['All', 'Interior Paint', 'Exterior Paint', 'Waterproofing', 'Wood & Metal', 'Decorative Finish'];
 
@@ -53,8 +55,24 @@ export default function Products() {
     }
   };
 
+  const seoPath = nameParam
+    ? `/products?name=${encodeURIComponent(nameParam)}`
+    : categoryParam && filter !== 'All'
+      ? `/products?category=${encodeURIComponent(categoryParam)}`
+      : '/products';
+
+  const seoDescription =
+    filter === 'All' && !nameParam
+      ? `Shop premium paints, primers, putty & tools in ${brand.city}. Authentic brands, ${brand.eta}, pay on delivery.`
+      : `Browse ${activeLabel} — paints & supplies in ${brand.city} with fast local delivery.`;
+
   return (
     <div className="space-y-6">
+      <PageSeo
+        title={nameParam || (filter !== 'All' ? `${filter} — Paints` : 'Paints & Coatings')}
+        description={seoDescription}
+        path={seoPath}
+      />
       <PageHero
         image={HERO_IMAGES.products}
         kicker="Full catalogue"

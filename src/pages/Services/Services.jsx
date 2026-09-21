@@ -6,6 +6,8 @@ import { useCatalog } from '../../context/CatalogContext';
 import PageHero from '../../components/common/PageHero';
 import { HERO_IMAGES, SERVICE_CATEGORY_HERO_IMAGES } from '../../data/heroImages';
 import { brand } from '../../data/siteContent';
+import PageSeo from '../../components/seo/PageSeo';
+import ServiceMedia from '../../components/services/ServiceMedia';
 
 const whyUs = [
   { icon: '✅', title: 'Vetted Experts', text: 'Background-verified & trained professionals only.', color: '#10b981' },
@@ -45,8 +47,25 @@ export default function Services() {
       ? serviceCategories
       : serviceCategories.filter((c) => c.id === activeTab);
 
+  const seoPath =
+    activeTab !== 'all' ? `/services?category=${encodeURIComponent(activeTab)}` : '/services';
+  const activeCategory = serviceCategories.find((c) => c.id === activeTab);
+
   return (
     <div className="space-y-10">
+      <PageSeo
+        title={
+          activeTab === 'all'
+            ? `Home Services in ${brand.city}`
+            : `${activeCategory?.label || 'Services'} in ${brand.city}`
+        }
+        description={
+          activeTab === 'all'
+            ? `Electrician, plumber, painter, carpenter, AC repair & cleaning in ${brand.city}. Vetted experts, same-day visits, pay after service.`
+            : `Book ${activeCategory?.label?.toLowerCase() || 'home services'} in ${brand.city}. ${activeCategory?.description || ''}`
+        }
+        path={seoPath}
+      />
 
       <PageHero
         image={HERO_IMAGES.services}
@@ -82,7 +101,7 @@ export default function Services() {
           onClick={() => setServiceTab('all')}
           className={`services-tab-btn ${activeTab === 'all' ? 'services-tab-active' : 'services-tab-inactive'}`}
         >
-          🏠 All Services
+          All Services
         </button>
         {serviceCategories.map((cat) => (
           <button
@@ -91,7 +110,7 @@ export default function Services() {
             onClick={() => setServiceTab(cat.id)}
             className={`services-tab-btn ${activeTab === cat.id ? 'services-tab-active' : 'services-tab-inactive'}`}
           >
-            {cat.icon} {cat.label}
+            {cat.label}
           </button>
         ))}
       </div>
@@ -112,9 +131,6 @@ export default function Services() {
             />
             <div className="service-category-overlay" />
             <div className="relative z-10 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-3xl bg-[#fff8ed]/20 backdrop-blur flex items-center justify-center text-4xl shadow-inner border border-[#f5deb3]/25 flex-shrink-0">
-                {cat.icon}
-              </div>
               <div>
                 <h2 className="text-2xl sm:text-3xl font-black mb-1 text-[#fffcf7]">{cat.label}</h2>
                 <p className="text-[#f5deb3] text-sm font-medium">{cat.description}</p>
@@ -127,15 +143,13 @@ export default function Services() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
               {cat.services.map((service) => (
                 <article key={service.id} className="service-card group">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl mb-4 transition-transform group-hover:scale-110 bg-[#fff3d6] border border-[#edd9b8]`}>
-                    {service.emoji}
-                  </div>
+                  <ServiceMedia service={service} variant="card" />
 
                   <h3 className="font-black text-[#4a3728] text-base mb-1 leading-tight">{service.name}</h3>
                   <p className="text-[#8b7355] text-xs mb-4 flex-grow font-medium">{service.summary}</p>
 
                   <div className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase px-2.5 py-1.5 rounded-xl mb-4 self-start bg-[#fff3d6] text-[#8b6914] border border-[#edd9b8]">
-                    {cat.icon} {cat.label}
+                    {cat.label}
                   </div>
 
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-[#f0e4c8]">

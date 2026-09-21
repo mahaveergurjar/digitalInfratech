@@ -6,7 +6,9 @@ import ProductCard from '../../components/products/ProductCard';
 import PageHero from '../../components/common/PageHero';
 import { useCatalog } from '../../context/CatalogContext';
 import { getDealProducts, getNewArrivalProducts } from '../../utils/catalogHelpers';
-import { HERO_IMAGES } from '../../data/heroImages';
+import { HERO_IMAGES, SERVICE_CATEGORY_HERO_IMAGES } from '../../data/heroImages';
+import PageSeo from '../../components/seo/PageSeo';
+import { homeJsonLd, seoDefaults } from '../../config/seo';
 
 const stats = [
   { value: '500+', label: 'Happy Customers', icon: '😊' },
@@ -25,6 +27,12 @@ export default function HomePage() {
 
   return (
     <div className="space-y-10 sm:space-y-14">
+      <PageSeo
+        title={null}
+        description={seoDefaults.description}
+        path="/"
+        jsonLd={homeJsonLd()}
+      />
 
       <PageHero
         image={HERO_IMAGES.home}
@@ -99,21 +107,25 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-          {serviceCategories.map((cat, i) => (
+          {serviceCategories.map((cat) => (
             <Link
               key={cat.id}
-              to="/services"
-              className="group relative card-premium no-underline text-center p-5 flex flex-col items-center gap-3 overflow-hidden"
+              to={`/services?category=${cat.id}`}
+              className="group relative card-premium no-underline overflow-hidden p-0 flex flex-col"
             >
-              {/* color accent top bar */}
-              <div className={`absolute top-0 left-0 right-0 h-1 rounded-t-[20px] bg-gradient-to-r ${cat.color}`} />
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform bg-gradient-to-br ${cat.color} bg-opacity-10 shadow-sm`}
-                style={{ background: `linear-gradient(135deg, rgba(var(--tw-gradient-from-position),0.1), rgba(var(--tw-gradient-to-position),0.08))` }}
-              >
-                <span className="text-3xl">{cat.icon}</span>
+              <div className={`absolute top-0 left-0 right-0 h-1 z-10 bg-gradient-to-r ${cat.color}`} />
+              <div className="aspect-[4/3] overflow-hidden bg-[#f0e4c8]">
+                <img
+                  src={SERVICE_CATEGORY_HERO_IMAGES[cat.id] || HERO_IMAGES.services}
+                  alt={cat.label}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
               </div>
-              <div>
-                <p className="text-sm font-black text-[#4a3728] group-hover:text-[#c05621] transition-colors leading-tight">{cat.label}</p>
+              <div className="p-4 text-center">
+                <p className="text-sm font-black text-[#4a3728] group-hover:text-[#c05621] transition-colors leading-tight">
+                  {cat.label}
+                </p>
                 <p className="text-[10px] text-[#a08060] mt-0.5 font-semibold">{cat.services.length} services</p>
               </div>
             </Link>

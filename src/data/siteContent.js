@@ -36,7 +36,19 @@ export const brand = {
   phone: "+91 6390510111",
   whatsapp: "+91 6390310111",
   supportEmail: "support@digitalinfratech.in",
+  website: "https://www.digitalinfratech.in/",
+  social: {
+    instagram: "https://www.instagram.com/digitalinfratech01",
+    youtube: "https://www.youtube.com/@digitalinfratech01",
+    linkedin: "https://www.linkedin.com/company/digitalinfratech/",
+  },
 };
+
+export const socialLinks = [
+  { id: "instagram", label: "Instagram", href: brand.social.instagram, icon: "📸" },
+  { id: "youtube", label: "YouTube", href: brand.social.youtube, icon: "▶️" },
+  { id: "linkedin", label: "LinkedIn", href: brand.social.linkedin, icon: "💼" },
+];
 
 export const navLinks = [
   { label: "Home", to: "/" },

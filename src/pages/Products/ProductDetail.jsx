@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { featuredProducts } from '../../data/siteContent';
 import OrderForm from '../../components/common/OrderForm';
+import PageSeo from '../../components/seo/PageSeo';
+import { brand } from '../../data/siteContent';
+import { productJsonLd } from '../../config/seo';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -10,14 +13,24 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className='empty-state card'>
-        <h2>Product not found</h2>
-        <Link to='/products' className='btn-primary'>Back to products</Link>
-      </div>
+      <>
+        <PageSeo title="Product not found" description={`Browse paints in ${brand.city}.`} path="/products" noindex />
+        <div className='empty-state card'>
+          <h2>Product not found</h2>
+          <Link to='/products' className='btn-primary'>Back to products</Link>
+        </div>
+      </>
     );
   }
 
   return (
+    <>
+    <PageSeo
+      title={product.name}
+      description={`${product.short} Order in ${brand.city} with ${brand.eta}.`}
+      path={`/product/${product.slug}`}
+      jsonLd={productJsonLd(product)}
+    />
     <div className='detail-layout'>
       <section className='detail-media card'>
         <img src={product.image} alt={product.name} />
@@ -72,5 +85,6 @@ export default function ProductDetail() {
         />
       )}
     </div>
+    </>
   );
 }
