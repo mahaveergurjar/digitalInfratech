@@ -45,9 +45,9 @@ export const brand = {
 };
 
 export const socialLinks = [
-  { id: "instagram", label: "Instagram", href: brand.social.instagram, icon: "📸" },
-  { id: "youtube", label: "YouTube", href: brand.social.youtube, icon: "▶️" },
-  { id: "linkedin", label: "LinkedIn", href: brand.social.linkedin, icon: "💼" },
+  { id: "instagram", label: "Instagram", href: brand.social.instagram },
+  { id: "youtube", label: "YouTube", href: brand.social.youtube },
+  { id: "linkedin", label: "LinkedIn", href: brand.social.linkedin },
 ];
 
 export const navLinks = [

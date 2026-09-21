@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { brand, socialLinks } from "../../data/siteContent";
+import SocialIcon from "../common/SocialIcon";
 import { getWhatsAppUrl } from "../../utils/whatsapp";
 const serviceLinks = [
   { label: "⚡ Electrician", to: "/services" },
@@ -180,9 +181,9 @@ export default function SiteFooter() {
                       rel="noopener noreferrer"
                       title={item.label}
                       aria-label={`${item.label} — Digital InfraTech`}
-                      className="w-9 h-9 rounded-xl bg-[#4a3728]/60 border border-[#6b5344]/60 flex items-center justify-center text-sm hover:bg-[#5c4033] hover:border-[#e8a838]/40 transition-colors no-underline"
+                      className="w-10 h-10 rounded-xl bg-[#4a3728]/60 border border-[#6b5344]/60 flex items-center justify-center text-[#f5deb3] hover:text-white hover:bg-[#5c4033] hover:border-[#e8a838]/40 transition-colors no-underline"
                     >
-                      {item.icon}
+                      <SocialIcon name={item.id} />
                     </a>
                   ))}
                 </div>
