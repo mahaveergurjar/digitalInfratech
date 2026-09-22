@@ -9,7 +9,6 @@ import {
   getDealProducts,
   getFeaturedHomeServices,
   getNewArrivalProducts,
-  getPopularHomeServices,
 } from '../../utils/catalogHelpers';
 import ServiceHomeCard from '../../components/services/ServiceHomeCard';
 import { HERO_IMAGES, SERVICE_CATEGORY_HERO_IMAGES } from '../../data/heroImages';
@@ -26,20 +25,11 @@ const stats = [
 export default function HomePage() {
   const { products, services, serviceCategories } = useCatalog();
   const dealProducts = useMemo(() => getDealProducts(products, 4), [products]);
-  const popularServices = useMemo(() => getPopularHomeServices(services, 4), [services]);
   const newArrivals = useMemo(
     () => getNewArrivalProducts(products, 8, dealProducts.map((product) => product.id)),
     [products, dealProducts],
   );
-  const featuredServices = useMemo(
-    () =>
-      getFeaturedHomeServices(
-        services,
-        8,
-        popularServices.map((service) => service.id),
-      ),
-    [services, popularServices],
-  );
+  const featuredServices = useMemo(() => getFeaturedHomeServices(services, 8), [services]);
 
   return (
     <div className="space-y-10 sm:space-y-14">
@@ -107,32 +97,6 @@ export default function HomePage() {
 
       {/* ─── CATEGORY QUICK ACCESS ─── */}
       <CategoryScrollStrip />
-
-      {/* ─── POPULAR SERVICES ─── */}
-      {popularServices.length > 0 && (
-        <section>
-          <div className="flex items-end justify-between gap-4 mb-7">
-            <div>
-              <span className="kicker" style={{ color: '#2563eb' }}>🛠️ Home services</span>
-              <h2 className="text-2xl sm:text-3xl font-black text-[#4a3728]">Popular services</h2>
-              <p className="text-[#8b7355] text-sm mt-1.5">
-                Paints ke saath electrician, plumber, AC &amp; cleaning — book in minutes
-              </p>
-            </div>
-            <Link
-              to="/services"
-              className="shrink-0 inline-flex items-center gap-1.5 text-sm font-bold text-[#c05621] hover:text-[#ea7a2a] no-underline border border-[#edd9b8] rounded-xl px-4 py-2 hover:bg-[#fff3d6] transition-all"
-            >
-              All services →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-            {popularServices.map((service) => (
-              <ServiceHomeCard key={service.id} service={service} />
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* ─── SERVICES GRID ─── */}
       <section>
