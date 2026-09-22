@@ -7,6 +7,7 @@ import { useCatalog } from '../../context/CatalogContext';
 import { searchCatalog } from '../../utils/search';
 import PageSeo from '../../components/seo/PageSeo';
 import ServiceMedia from '../../components/services/ServiceMedia';
+import CatalogPrice, { DiscountBadge } from '../../components/common/CatalogPrice';
 import { brand } from '../../data/siteContent';
 
 export default function SearchResults() {
@@ -83,7 +84,12 @@ export default function SearchResults() {
             {serviceResults.map((service) => (
               <article key={service.id} className="card-premium p-5 flex flex-col">
                 <div className="flex items-start gap-3 mb-3">
-                  <div className="w-20 h-20 shrink-0 overflow-hidden rounded-xl border border-slate-100 bg-slate-50">
+                  <div className="w-20 h-20 shrink-0 overflow-hidden rounded-xl border border-slate-100 bg-slate-50 relative">
+                    <DiscountBadge
+                      price={service.price}
+                      originalPrice={service.originalPrice}
+                      className="!text-[9px] !px-1.5 !py-0.5 !top-1 !right-1 !left-auto"
+                    />
                     <ServiceMedia service={service} variant="thumb" className="w-full h-full object-cover" />
                   </div>
                   <div>
@@ -92,7 +98,7 @@ export default function SearchResults() {
                   </div>
                 </div>
                 <div className="mt-auto flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
-                  <strong className="text-lg font-black text-slate-900">{money.format(service.price)}</strong>
+                  <CatalogPrice price={service.price} originalPrice={service.originalPrice} fromLabel="" />
                   <button
                     type="button"
                     className="py-2 px-4 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors text-sm"

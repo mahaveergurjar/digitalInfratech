@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/write-sitemap.mjs && vite build",
+    "build": "node scripts/compress-public-images.mjs && node scripts/write-sitemap.mjs && vite build",
+    "compress-images": "node scripts/compress-public-images.mjs",
+    "service-photos": "node scripts/download-service-photos.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -22,6 +24,7 @@
     "autoprefixer": "^10.5.4",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
+    "sharp": "^0.34.5",
     "vite": "^5.0.0"
   }
 }

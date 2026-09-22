@@ -22,6 +22,7 @@ const emptyServiceForm = {
   summary: '',
   category: SERVICE_CATEGORY_META[0].id,
   price: '',
+  discount: '',
   image: '',
 };
 
@@ -136,6 +137,7 @@ export default function AdminCatalog() {
       summary: item.summary,
       category: item.category,
       price: String(item.price),
+      discount: String(getDiscountPercent(item.price, item.originalPrice)),
       image: item.image || '',
     });
     setError('');
@@ -158,10 +160,13 @@ export default function AdminCatalog() {
     }
   };
 
-  const productDiscountPreview =
-    productForm.price && productForm.discount
-      ? Math.round(Number(productForm.price) / (1 - Math.min(99, Number(productForm.discount)) / 100))
+  const discountPreview = (form) =>
+    form.price && form.discount
+      ? Math.round(Number(form.price) / (1 - Math.min(99, Number(form.discount)) / 100))
       : null;
+
+  const productDiscountPreview = discountPreview(productForm);
+  const serviceDiscountPreview = discountPreview(serviceForm);
 
   return (
     <AdminLayout title="Catalog Manager">
@@ -324,15 +329,31 @@ export default function AdminCatalog() {
                     <option key={cat.id} value={cat.id}>{cat.label}</option>
                   ))}
                 </select>
-                <input
-                  type="number"
-                  min="0"
-                  className="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm"
-                  placeholder="Price"
-                  value={serviceForm.price}
-                  onChange={(e) => setServiceForm({ ...serviceForm, price: e.target.value })}
-                  required
-                />
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="number"
+                    min="0"
+                    className="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm"
+                    placeholder="Sale price (₹)"
+                    value={serviceForm.price}
+                    onChange={(e) => setServiceForm({ ...serviceForm, price: e.target.value })}
+                    required
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    max="99"
+                    className="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm"
+                    placeholder="Discount %"
+                    value={serviceForm.discount}
+                    onChange={(e) => setServiceForm({ ...serviceForm, discount: e.target.value })}
+                  />
+                </div>
+                {serviceDiscountPreview && (
+                  <p className="text-xs text-stone-500">
+                    MRP preview: <strong>{money.format(serviceDiscountPreview)}</strong>
+                  </p>
+                )}
                 <input
                   className="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm"
                   placeholder="Image URL (optional — category photo used if empty)"
@@ -379,8 +400,7 @@ export default function AdminCatalog() {
             ) : (
               <ul className="divide-y divide-stone-100">
                 {(tab === 'products' ? products : services).map((item) => {
-                  const discount =
-                    tab === 'products' ? getDiscountPercent(item.price, item.originalPrice) : 0;
+                  const discount = getDiscountPercent(item.price, item.originalPrice);
                   const isEditing =
                     tab === 'products'
                       ? editingProductId === item.id

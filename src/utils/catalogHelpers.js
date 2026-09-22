@@ -1,8 +1,9 @@
+import { resolveServiceOriginalPrice } from '../../shared/catalogPricing.js';
 import { products, allHomeServices } from '../data/mockData';
 import { SERVICE_CATEGORY_META } from '../data/serviceCategoryMeta';
 import { resolveProductImage } from '../data/productImages';
 
-const STORAGE_KEY = 'dit-catalog-v12';
+const STORAGE_KEY = 'dit-catalog-v13';
 
 export function buildServiceCategories(services) {
   return SERVICE_CATEGORY_META.map((meta) => ({
@@ -28,6 +29,13 @@ export function normalizeCatalogItem(item, index = 0) {
 
   if (normalized.type === 'product') {
     normalized.image = resolveProductImage(normalized, index);
+  }
+
+  if (normalized.type === 'service') {
+    normalized.originalPrice = resolveServiceOriginalPrice(
+      normalized.price,
+      normalized.originalPrice,
+    );
   }
 
   return normalized;
@@ -119,6 +127,51 @@ export function getNewArrivalProducts(productList, limit = 8, excludeIds = []) {
     .slice(0, limit);
 }
 
+/** Cheapest service per category — good for homepage “popular” row. */
+export function getPopularHomeServices(serviceList, limit = 4) {
+  const cheapestByCategory = new Map();
+
+  serviceList.forEach((service) => {
+    const current = cheapestByCategory.get(service.category);
+    if (!current || service.price < current.price) {
+      cheapestByCategory.set(service.category, service);
+    }
+  });
+
+  return [...cheapestByCategory.values()]
+    .sort((a, b) => a.price - b.price)
+    .slice(0, limit);
+}
+
+/** Mix of services across categories (like new-arrival variety). */
+export function getFeaturedHomeServices(serviceList, limit = 8, excludeIds = []) {
+  const excluded = new Set(excludeIds);
+  const available = serviceList.filter((service) => !excluded.has(service.id));
+  const categories = [...new Set(available.map((service) => service.category))];
+  const picked = [];
+  let round = 0;
+
+  while (picked.length < limit && categories.length > 0) {
+    let added = false;
+    for (const category of categories) {
+      const pool = available.filter(
+        (service) =>
+          service.category === category && !picked.some((item) => item.id === service.id),
+      );
+      const candidate = pool[round];
+      if (candidate) {
+        picked.push(candidate);
+        added = true;
+        if (picked.length >= limit) break;
+      }
+    }
+    if (!added) break;
+    round += 1;
+  }
+
+  return picked.slice(0, limit);
+}
+
 export function resolveProductPricing(body) {
   const price = Number(body.price);
   const discount = Math.min(99, Math.max(0, Number(body.discount) || 0));
@@ -151,15 +204,18 @@ export function createCatalogItem(type, body) {
     });
   }
 
+  const { price, originalPrice } = resolveProductPricing(body);
   return normalizeCatalogItem({
     id,
     type: 'service',
     name: body.name,
     summary: body.summary,
     category: body.category,
-    price: Number(body.price),
+    price,
+    originalPrice,
     emoji: body.emoji || '🛠️',
     image: body.image || '',
+    createdAt,
   });
 }
 
@@ -179,14 +235,17 @@ export function updateCatalogItem(type, id, body) {
     });
   }
 
+  const { price, originalPrice } = resolveProductPricing(body);
   return normalizeCatalogItem({
     id,
     type: 'service',
     name: body.name,
     summary: body.summary,
     category: body.category,
-    price: Number(body.price),
+    price,
+    originalPrice,
     emoji: body.emoji || '🛠️',
     image: body.image || '',
+    createdAt: body.createdAt,
   });
 }

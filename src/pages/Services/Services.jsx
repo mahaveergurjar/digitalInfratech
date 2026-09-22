@@ -8,6 +8,7 @@ import { HERO_IMAGES, SERVICE_CATEGORY_HERO_IMAGES } from '../../data/heroImages
 import { brand } from '../../data/siteContent';
 import PageSeo from '../../components/seo/PageSeo';
 import ServiceMedia from '../../components/services/ServiceMedia';
+import CatalogPrice from '../../components/common/CatalogPrice';
 
 const whyUs = [
   { icon: '✅', title: 'Vetted Experts', text: 'Background-verified & trained professionals only.', color: '#10b981' },
@@ -153,10 +154,7 @@ export default function Services() {
                   </div>
 
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-[#f0e4c8]">
-                    <div>
-                      <span className="block text-[10px] text-[#a08060] uppercase font-bold tracking-wide">From</span>
-                      <strong className="text-xl font-black text-[#4a3728]">{money.format(service.price)}</strong>
-                    </div>
+                    <CatalogPrice price={service.price} originalPrice={service.originalPrice} />
                     <button
                       type="button"
                       className="product-card-btn-primary text-xs px-5 py-2.5"

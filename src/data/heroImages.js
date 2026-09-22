@@ -1,14 +1,14 @@
 export const HERO_IMAGES = {
-  home: '/hero/home-hero.png',
-  products: '/hero/products-hero.png',
-  services: '/hero/services-hero.png',
+  home: '/hero/home-hero.webp',
+  products: '/hero/products-hero.webp',
+  services: '/hero/services-hero.webp',
 };
 
 export const SERVICE_CATEGORY_HERO_IMAGES = {
-  electrician: '/hero/service-electrical.png',
-  plumber: '/hero/service-plumbing.png',
-  painter: '/hero/service-painting.png',
-  carpenter: '/hero/service-construction.png',
-  'ac-repair': '/hero/service-ac-repair.png',
-  cleaning: '/hero/service-construction.png',
+  electrician: '/hero/service-electrical.webp',
+  plumber: '/hero/service-plumbing.webp',
+  painter: '/hero/service-painting.webp',
+  carpenter: '/hero/service-construction.webp',
+  'ac-repair': '/hero/service-ac-repair.webp',
+  cleaning: '/hero/service-construction.webp',
 };

@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { money } from '../../data/mockData';
+import CatalogPrice from '../../components/common/CatalogPrice';
 import { SERVICE_CATEGORY_META } from '../../data/serviceCategoryMeta';
 import { brand } from '../../data/siteContent';
 import { useCatalog } from '../../context/CatalogContext';
@@ -68,7 +68,7 @@ export default function ServiceCategory() {
                 <h2 className="font-black text-[#4a3728] text-base mb-1">{service.name}</h2>
                 <p className="text-[#8b7355] text-xs mb-4 flex-grow font-medium">{service.summary}</p>
                 <div className="flex items-center justify-between mt-auto pt-4 border-t border-[#f0e4c8]">
-                  <strong className="text-xl font-black text-[#4a3728]">{money.format(service.price)}</strong>
+                  <CatalogPrice price={service.price} originalPrice={service.originalPrice} fromLabel="" />
                   <button
                     type="button"
                     className="product-card-btn-primary text-xs px-5 py-2.5"

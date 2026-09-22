@@ -35,7 +35,9 @@ export function CartProvider({ children }) {
       name: item.name,
       pack: item.pack || item.summary || 'Painting service',
       price: item.price,
+      originalPrice: item.originalPrice,
       image: item.image,
+      emoji: item.emoji,
       qty: 1,
     };
 

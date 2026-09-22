@@ -52,14 +52,12 @@ export function validateCatalogBody(body, type) {
 
   const price = Number(body.price);
   let originalPrice = Number(body.originalPrice) || 0;
+  const discount = Math.min(99, Math.max(0, Number(body.discount) || 0));
 
-  if (type === 'product') {
-    const discount = Math.min(99, Math.max(0, Number(body.discount) || 0));
-    if (discount > 0 && price > 0) {
-      originalPrice = Math.round(price / (1 - discount / 100));
-    } else if (!originalPrice || originalPrice < price) {
-      originalPrice = price;
-    }
+  if (discount > 0 && price > 0) {
+    originalPrice = Math.round(price / (1 - discount / 100));
+  } else if (!originalPrice || originalPrice < price) {
+    originalPrice = price;
   }
 
   return {

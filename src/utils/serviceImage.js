@@ -1,4 +1,5 @@
 import { HERO_IMAGES, SERVICE_CATEGORY_HERO_IMAGES } from '../data/heroImages';
+import { getServiceStockImage } from '../data/serviceStockImages.js';
 
 /** Normalize image URLs pasted in admin (https missing, protocol-relative, etc.). */
 export function getServiceImageUrl(image) {
@@ -18,9 +19,14 @@ export function getCategoryServiceImage(categoryId) {
   return HERO_IMAGES.services;
 }
 
-/** Admin URL, else category stock photo, else site default. */
+function getBuiltInServiceImage(service) {
+  const id = service?.id || service?.itemId;
+  return getServiceStockImage(id) || getCategoryServiceImage(service?.category);
+}
+
+/** Admin URL, else per-service stock photo, else category hero. */
 export function resolveServiceImage(service) {
-  return getServiceImageUrl(service?.image) || getCategoryServiceImage(service?.category);
+  return getServiceImageUrl(service?.image) || getBuiltInServiceImage(service);
 }
 
 /** Ordered list for img onError fallback (broken external URLs). */
@@ -28,8 +34,11 @@ export function getServiceImageFallbacks(service) {
   const list = [];
   const custom = getServiceImageUrl(service?.image);
   if (custom) list.push(custom);
+  const stock = getServiceStockImage(service?.id || service?.itemId);
+  if (stock && !list.includes(stock)) list.push(stock);
   const category = getCategoryServiceImage(service?.category);
   if (!list.includes(category)) list.push(category);
+  if (!list.includes(HERO_IMAGES.services)) list.push(HERO_IMAGES.services);
   return list;
 }
 

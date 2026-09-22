@@ -1,5 +1,6 @@
 import CatalogItem from './CatalogItem.js';
 import { EXPECTED_PRODUCT_COUNT, getDefaultCatalogItems } from './defaultCatalog.js';
+import { resolveServiceOriginalPrice } from '../../shared/catalogPricing.js';
 import { resolveProductImage } from './productImages.js';
 
 function serializeItem(item) {
@@ -17,7 +18,10 @@ function serializeItem(item) {
     pack: item.pack || '',
     category: item.category,
     price: item.price,
-    originalPrice: item.originalPrice || 0,
+    originalPrice:
+      item.type === 'service'
+        ? resolveServiceOriginalPrice(item.price, item.originalPrice)
+        : item.originalPrice || 0,
     image,
     emoji: item.emoji || '🛠️',
     active: item.active !== false,

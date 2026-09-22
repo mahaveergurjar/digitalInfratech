@@ -1,7 +1,7 @@
 import { resolveProductImage } from './productImages';
 
-export const heroPaint = '/hero/home-hero.png';
-export const servicePainting = '/hero/service-painting.png';
+export const heroPaint = '/hero/home-hero.webp';
+export const servicePainting = '/hero/service-painting.webp';
 
 export const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 

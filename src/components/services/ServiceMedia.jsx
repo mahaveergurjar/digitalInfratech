@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { DiscountBadge } from '../common/CatalogPrice';
 import { getServiceImageFallbacks } from '../../utils/serviceImage';
 
 /**
@@ -27,8 +28,9 @@ export default function ServiceMedia({ service, variant = 'card', className = ''
   if (variant === 'card') {
     return (
       <div
-        className={`service-card-media aspect-[16/10] -mx-5 -mt-5 mb-4 overflow-hidden bg-[#f0e4c8] ${className}`}
+        className={`service-card-media relative aspect-[16/10] -mx-5 -mt-5 mb-4 overflow-hidden bg-[#f0e4c8] ${className}`}
       >
+        <DiscountBadge price={service?.price} originalPrice={service?.originalPrice} />
         <img
           src={src}
           alt={name}
